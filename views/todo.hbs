@@ -1,0 +1,20 @@
+<div class = "todo">
+    <h1>Редактировать</h1>
+</div>
+
+<form action="/:id" method='POST'>
+    <div class="input-field">
+        <input value ="{{todo.title}}"placeholder="Наздание заметки" name="title" id="title" type="text" class="validate" required min="1">
+        <label for="title">Название заметки</label>
+        <span class="helper-text" data-error="Введите название"> </span>
+    </div>
+
+<input type = 'hidden' name='id' value ="{{todo.id}}">
+    <button class='btn btn-primary'>Редактировать</button>
+</form>
+
+<form action="/delete" method = "POST">
+<input type = 'hidden' name = 'id' value='{{todo.id}}'/>
+<button class = 'btn red'>Удалить курс</button>
+
+</form>
