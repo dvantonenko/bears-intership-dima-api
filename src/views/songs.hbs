@@ -1,0 +1,35 @@
+<form action="/song" method='POST'>
+    <div class="input-field">
+        <div>
+            <input placeholder="Исполнитель" name="singer" id="singer" type="text" class="validate" required min="1">
+            <span class="helper-text" data-error="Введите название исполнителя"> </span>
+
+        </div>
+        <div>
+            <input placeholder="Название песни" name="title" id="title" type="text" class="validate" required min="1">
+            <span class="helper-text" data-error="Введите название песни"></span>
+        </div>
+
+    </div>
+
+    <button class='btn btn-primary'>Добавить Песню</button>
+</form>
+<table>
+    <thead>
+        <tr>
+            <th>Artist</th>
+            <th>Song Name</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {{#if songs.length}}
+        {{#each songs}}
+        <tr>
+            <td>{{Artist}}</td>
+            <td>{{'Song Title'}}</td>
+        </tr>
+        {{/each}}
+        {{/if}}
+    </tbody>
+</table>

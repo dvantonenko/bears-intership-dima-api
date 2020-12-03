@@ -11,6 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "aws-sdk": "^2.802.0",
+    "config": "^3.3.3",
     "express": "^4.17.1",
     "express-handlebars": "^5.2.0",
     "uuid": "^8.3.1"
