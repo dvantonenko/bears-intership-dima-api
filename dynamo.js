@@ -1,9 +1,14 @@
 let AWS = require('aws-sdk')
+
+let accessKeyId =process.env.ACCESSKEYID
+let secretAccessKey=proces.env.SECRETACCESSKEY
+
 let awsConfig = {
     "region": "us-east-2",
-    "accessKeyId": "AKIA2CJM645LOBT7PSXV",
-    "secretAccessKey": "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"
+    accessKeyId ,
+    secretAccessKey
 }
+
 
 AWS.config.update(awsConfig)
 

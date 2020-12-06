@@ -8,9 +8,6 @@ router.get('/', async (req, res) => {
 
     const { fetchAllItems } = ddbf()
     const fetched = await fetchAllItems()
-    const songs = await fetched
-
-
 })
 
 router.post('/', async (req, res) => {
