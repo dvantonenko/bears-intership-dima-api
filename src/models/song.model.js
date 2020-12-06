@@ -2,6 +2,7 @@ const { v4: uuid } = require('uuid');
 const fs = require('fs')
 const path = require('path');
 const ddbf = require('../../dynamo')
+
 class Song {
     constructor(artist, songTitle) {
         this.artist = artist,
@@ -15,9 +16,7 @@ class Song {
             id: this.id
         }
     }
-
-
-
+    
     async save() {
         const { putItem, fetchOneByKey, fetchAllItems } = ddbf()
 

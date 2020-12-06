@@ -9,9 +9,7 @@ router.get('/', async (req, res) => {
     const { fetchAllItems } = ddbf()
     const fetched = await fetchAllItems()
     const songs = await fetched
-    res.render('songs', {
-        songs: songs
-    })
+
 
 })
 
