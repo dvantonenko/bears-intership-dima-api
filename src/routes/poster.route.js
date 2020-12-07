@@ -15,7 +15,8 @@ router.get('/', async (req, res) => {
 
 router.post('/add', async (req, res) => {
     try {
-        const { title, subtitle, discription,  url, id } = req.body
+
+        const { title, subtitle, discription, url, id } = req.body
         const todo = new Todo(title, subtitle, discription, url, id)
         await todo.save()
     } catch (e) {
@@ -28,12 +29,13 @@ router.post('/add', async (req, res) => {
 router.post('/delete', async (req, res) => {
     try {
         const { id } = req.body
+        console.log(id)
         await Todo.deletePost(id);
     } catch (e) {
         console.log(e.message)
     }
 })
- 
+
 
 router.get('/:id', async (req, res) => {
     try {
@@ -44,15 +46,15 @@ router.get('/:id', async (req, res) => {
     }
 })
 
-router.post('/update',async (req,res)=>{
+router.post('/update', async (req, res) => {
     try {
-        const { title, discription, subtitle, url,id } = req.body
-        const todo = new Todo(title,subtitle , discription, url ,id)
+        const { title, discription, subtitle, url, id } = req.body
+        const todo = new Todo(title, subtitle, discription, url, id)
         await todo.update(todo)
-
+        res.status(200).json({ message: "Успешное обновление" })
     } catch (e) {
         console.log(e.message)
     }
- 
+
 })
 module.exports = router

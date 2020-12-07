@@ -52,6 +52,7 @@ class Todo {
 
     }
     static async deletePost(id) {
+        
         const todos = await Todo.getAllTodos()//полуаем данные из файла
         const index = todos.findIndex(item => item.id === id)
         todos.splice(index, 1)
@@ -77,6 +78,7 @@ class Todo {
         const elem = todos.find(item => item.id === id)
         return elem
     }
+
     async update(todo) {
         const todos = await Todo.getAllTodos()
         const index = todos.findIndex(item => item.id === todo.id)
