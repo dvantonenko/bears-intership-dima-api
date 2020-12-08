@@ -1,7 +1,7 @@
 const { v4: uuid } = require('uuid');
 const fs = require('fs')
 const path = require('path');
-class Todo {
+class Poster {
     constructor(title, subtitle, discription, url, id) {
         this.title = title,
             this.subtitle = subtitle,
@@ -20,11 +20,11 @@ class Todo {
         }
     }
 
-    async save() {
-        const todos = await Todo.getAllTodos()//получаем данные из файла
-        todos.push(this.toJSON())//контекст this в данном случаи является экземпляр класса у которого вызываем метод
+  async save() {
+        const posters = await Poster.getAllPosters()//получаем данные из файла
+        posters.push(this.toJSON())//контекст this в данном случаи является экземпляр класса у которого вызываем метод
         return new Promise((resolve, reject) => {
-            fs.writeFile(path.join(__dirname, '..', '..', 'data', 'todos.json'), JSON.stringify(todos),
+            fs.writeFile(path.join(__dirname, '..', '..', 'data', 'todos.json'), JSON.stringify(posters),
                 (err) => {
                     if (err) {
                         reject(err)
@@ -34,9 +34,10 @@ class Todo {
                 }
             )
         })
+        
     }
 
-    static getAllTodos() {//статический метод для получения данных
+    static async getAllPosters() {//статический метод для получения данных
         return new Promise((resolve, reject) => {
             fs.readFile(path.join(__dirname, '..', '..', 'data', 'todos.json'),
                 'utf-8', (err, content) => {
@@ -53,14 +54,14 @@ class Todo {
     }
     static async deletePost(id) {
         
-        const todos = await Todo.getAllTodos()//полуаем данные из файла
-        const index = todos.findIndex(item => item.id === id)
-        todos.splice(index, 1)
+        const posters = await Poster.getAllPosters()//полуаем данные из файла
+        const index = posters.findIndex(item => item.id === id)
+        posters.splice(index, 1)
 
-        fs.truncate(path.join(__dirname, '..', '..', 'data', 'todos.json'), 0, function () { console.log('done') })
+        fs.truncate(path.join(__dirname, '..', '..', 'data', 'todos.json'), 0, function () { console.log('file cleared') })
 
         return new Promise((resolve, reject) => {
-            fs.writeFile(path.join(__dirname, '..', '..', 'data', 'todos.json'), JSON.stringify(todos),
+            fs.writeFile(path.join(__dirname, '..', '..', 'data', 'todos.json'), JSON.stringify(posters),
                 (err) => {
                     if (err) {
                         reject(err)
@@ -74,19 +75,19 @@ class Todo {
     }
 
     static async getById(id) {
-        const todos = await Todo.getAllTodos()
-        const elem = todos.find(item => item.id === id)
+        const posters = await Poster.getAllPosters()
+        const elem = posters.find(item => item.id === id)
         return elem
     }
 
-    async update(todo) {
-        const todos = await Todo.getAllTodos()
-        const index = todos.findIndex(item => item.id === todo.id)
-        todos[index] = todo
+    async update(poster) {
+        const posters = await Poster.getAllPosters()
+        const index = posters.findIndex(item => item.id === poster.id)
+        posters[index] = poster
 
         return new Promise((resolve, reject) => {
             fs.writeFile(path.join(__dirname, '..', '..', 'data', 'todos.json'),
-                JSON.stringify(todos),
+                JSON.stringify(posters),
                 (err) => {
                     if (err) {
                         reject(err)
@@ -102,4 +103,4 @@ class Todo {
 
 }
 
-module.exports = Todo
+module.exports = Poster

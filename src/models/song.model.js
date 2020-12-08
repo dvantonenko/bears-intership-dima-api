@@ -29,10 +29,10 @@ class Song {
 
     }
 
-    static async update(todo) {
+    static async update() {
 
     }
-    static async delete(todo) {
+    static async delete() {
 
     }
 }
