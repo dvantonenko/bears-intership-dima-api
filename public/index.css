@@ -8,3 +8,10 @@
 .todo h1{
     margin-bottom: 2rem;
 }
+
+.path_to_song{
+    position: absolute;
+    top:10%;
+    left : 50%;
+    transform : translate(-50%,-50%)
+}
