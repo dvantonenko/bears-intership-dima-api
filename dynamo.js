@@ -45,7 +45,8 @@ const dynamoFunc = () => {
                 console.log("Scan succeeded.");
             }).promise()
             items.Items.forEach((item) => scanResult.push(item))
-        } while (typeof items.LastEvaluatedKey != "undefined")
+
+        }while (typeof items.LastEvaluatedKey != "undefined")
 
         return scanResult
     }
@@ -73,7 +74,8 @@ const dynamoFunc = () => {
             }
         })
     }
-// апдейт елемента: изменение существущих и добовление новых параметров
+
+    // апдейт елемента: изменение существущих и добовление новых параметров
     const updateItem = (primaryKey) => {
         var params = {
             TableName: 'Books',
@@ -100,25 +102,82 @@ const dynamoFunc = () => {
         });
     }
 
-// удаление елемента из таблицы 
-const deleteItem = (primaryKey) =>{
-    var params = {
-        Key: {
-          'Author': `${primaryKey}`//указываем значение по первичному ключу
-        },
-        TableName: 'Books'// указываем названия таблицы
-      };
-      
-      docClient.delete(params, function(err, data) {
-        if (err) {
-          console.log("Error", err);
-        } else {
-          console.log("Success", data);
-        }
-      });
-}
+    // удаление елемента из таблицы 
+    const deleteItem = (primaryKey) => {
+        var params = {
+            Key: {
+                'Author': `${primaryKey}`//указываем значение по первичному ключу
+            },
+            TableName: 'Books'// указываем названия таблицы
+        };
 
-    return { fetchOneByKey, fetchAllItems, putItem , updateItem , deleteItem}
+        docClient.delete(params, function (err, data) {
+            if (err) {
+                console.log("Error", err);
+            } else {
+                console.log("Success", data);
+            }
+        });
+    }
+
+    const addPoster = async (tableName, obj) => {
+
+        var params = {
+            TableName: `${tableName}`,
+            Item: obj
+        };
+        let result;
+        result = await docClient.put(params, function (err, data) {
+            if (err) {
+                throw new Error(err.message)
+            } else {
+                return 'Пост успешно добавлен'
+            }
+        })
+
+    }
+
+    const deletePoster = (tableName, posterTitle) => {
+
+        var params = {
+            Key: {
+                'title': `${posterTitle}`//указываем значение по первичному ключу
+            },
+            TableName: `${tableName}`// указываем названия таблицы
+        };
+
+        docClient.delete(params, function (err, data) {
+            if (err) {
+                throw new Error(err.message)
+            } else {
+                return 'Пост успешно удален'
+            }
+        });
+    }
+
+    const fetchAllPosters = async (tableName ) => {
+        let params = {
+            TableName: `${tableName}`,
+        };
+        let scanResult = [];
+        let items;
+        do {
+            items = await docClient.scan( params 
+            //     ,(err , data ) => {
+            //     // if (err) {
+            //     //     console.error("Scan wrong", JSON.stringify(err, null, 2));
+            //     // }
+            //     // console.log("Scan succeeded." ,data);
+            // }
+            ).promise()
+            console.log(items)
+            items.Items.forEach((item) => scanResult.push(item))       
+        } while (typeof items.LastEvaluatedKey != "undefined")
+
+        return scanResult
+    }
+
+    return { fetchOneByKey, fetchAllItems, putItem, updateItem, deleteItem, addPoster, deletePoster , fetchAllPosters }
 }
 
 module.exports = dynamoFunc
