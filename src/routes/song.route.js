@@ -5,11 +5,10 @@ const router = Router()
 
 // '/song'
 router.get('/', async (req, res) => {
-
     const { fetchAllItems } = ddbf()
     const fetched = await fetchAllItems()
 
-    
+    res.status(200)
 })
 
 router.post('/', async (req, res) => {

@@ -1,7 +1,6 @@
 const express = require('express')
 const path = require('path')
 const app = express()
-const dynamo = require('./dynamo.js')
 const posterRoutes = require('./src/routes/poster.route')
 const userRoutes = require('./src/routes/user.route')
 const songRoutes = require('./src/routes/song.route')
