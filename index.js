@@ -17,12 +17,8 @@ app.use('/user',userRoutes)
 app.use('/song',songRoutes )
 require('dotenv').config()
 
-const ddbf = require('./dynamo')
 const PORT = process.env.PORT || 3000
 
-// const {updateItem , deleteItem} = ddbf()
-// updateItem('Alex Duma')
-// deleteItem('Bredbery')
 
 async function start() {
     try {

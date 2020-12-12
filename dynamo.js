@@ -3,6 +3,7 @@ let AWS = require('aws-sdk')
 let accessKeyId = process.env.aws_access_key_id
 let secretAccessKey = process.env.aws_secret_access_key
 
+
 let awsConfig = {
     "region": "us-east-2",
     "accessKeyId": accessKeyId,
@@ -28,7 +29,7 @@ const dynamoFunc = () => {
             } else {
                 console.log(JSON.stringify(data, null, 2))
             }
-        })
+        }).then(response => console.log(response))
     }
     // забрать все елементы таблицы
     const fetchAllItems = async (tableName = "Music") => {
@@ -43,10 +44,11 @@ const dynamoFunc = () => {
                     console.error("Scan wrong", JSON.stringify(err, null, 2));
                 }
                 console.log("Scan succeeded.");
-            }).promise()
+            })
+            // .promise() //иначе ошибка can not push of undefined
             items.Items.forEach((item) => scanResult.push(item))
 
-        }while (typeof items.LastEvaluatedKey != "undefined")
+        } while (typeof items.LastEvaluatedKey != "undefined")
 
         return scanResult
     }
@@ -55,12 +57,12 @@ const dynamoFunc = () => {
         var params = {
             TableName: 'Music',
             Item: {
-                HashKey: 'haskey',// Эти поля необязательны , обазетелен только первичый ключ,остальные полня указываем сами
-                NumAttribute: 1,// --"--
-                BoolAttribute: true,// --"--
-                ListAttribute: [1, 'two', false],// --"--
-                MapAttribute: { foo: 'bar' },// --"--
-                NullAttribute: null,// --"--
+                // HashKey: 'haskey',// Эти поля необязательны , обазетелен только первичый ключ,остальные полня указываем сами
+                // NumAttribute: 1,// --"--
+                // BoolAttribute: true,// --"--
+                // ListAttribute: [1, 'two', false],// --"--
+                // MapAttribute: { foo: 'bar' },// --"--
+                // NullAttribute: null,// --"-- 
                 "Artist": `${artist}`,//это поле обязательно           
                 "Song Title": `${songTitle}`// и это тоже
             }
@@ -120,64 +122,7 @@ const dynamoFunc = () => {
         });
     }
 
-    const addPoster = async (tableName, obj) => {
-
-        var params = {
-            TableName: `${tableName}`,
-            Item: obj
-        };
-        let result;
-        result = await docClient.put(params, function (err, data) {
-            if (err) {
-                throw new Error(err.message)
-            } else {
-                return 'Пост успешно добавлен'
-            }
-        })
-
-    }
-
-    const deletePoster = (tableName, posterTitle) => {
-
-        var params = {
-            Key: {
-                'title': `${posterTitle}`//указываем значение по первичному ключу
-            },
-            TableName: `${tableName}`// указываем названия таблицы
-        };
-
-        docClient.delete(params, function (err, data) {
-            if (err) {
-                throw new Error(err.message)
-            } else {
-                return 'Пост успешно удален'
-            }
-        });
-    }
-
-    const fetchAllPosters = async (tableName ) => {
-        let params = {
-            TableName: `${tableName}`,
-        };
-        let scanResult = [];
-        let items;
-        do {
-            items = await docClient.scan( params 
-            //     ,(err , data ) => {
-            //     // if (err) {
-            //     //     console.error("Scan wrong", JSON.stringify(err, null, 2));
-            //     // }
-            //     // console.log("Scan succeeded." ,data);
-            // }
-            ).promise()
-            console.log(items)
-            items.Items.forEach((item) => scanResult.push(item))       
-        } while (typeof items.LastEvaluatedKey != "undefined")
-
-        return scanResult
-    }
-
-    return { fetchOneByKey, fetchAllItems, putItem, updateItem, deleteItem, addPoster, deletePoster , fetchAllPosters }
+    return { fetchOneByKey, fetchAllItems, putItem, updateItem, deleteItem }
 }
 
 module.exports = dynamoFunc
