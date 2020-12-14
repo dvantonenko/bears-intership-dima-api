@@ -22,7 +22,7 @@ exports.getPostersController = async (req, res, next) => {
         res.status(200).json({ posters })
     } catch (e) {
         console.log(e.message)
-        res.status(500).json({ message: "Ошибка сервера,попробуйте снова" })
+        res.status(500).json({ message: "Ошибка сервера,попробуйте снова" , error: e.message  })
     }
 
 }
@@ -37,7 +37,7 @@ exports.deletePosterController = async (req, res, next) => {
         }
         res.status(200).json({ message: "Пост успешно удален" })
     } catch (e) {
-        res.status(500).json({ message: 'Что-то пошло не так,повторите попытку снова' })
+        res.status(500).json({ message: 'Что-то пошло не так,повторите попытку снова', error: e.message  })
     }
 
 }
@@ -52,19 +52,19 @@ exports.getByIdController = async (req, res, next) => {
         }
         res.status(200).json({ poster })
     } catch (e) {
-        res.status(500).json({ message: 'Что-то пошло не так,попробуйте снова' })
+        res.status(500).json({ message: 'Что-то пошло не так,попробуйте снова', error: e.message  })
     }
 }
 
 exports.updatePosterConroller = async (req, res, next) => {
     try {
+        updatePoster(req.body)
         // const { title, discription, subtitle, src, id } = req.body
-        updatePoster(id, req.body)
         // const poster = new Poster(title, subtitle, discription, src, id)
         // await poster.update(poster)
         res.status(200).json({ message: "Пост обновлен" })
     } catch (e) {
-        res.status(500).json({ message: 'Ошибка обновлнения данных,попробуйте снова' })
+        res.status(500).json({ message: 'Ошибка обновлнения данных,попробуйте снова', error: e.message  })
     }
 
 }

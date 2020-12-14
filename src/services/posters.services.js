@@ -23,87 +23,81 @@ const postersService = () => {
             TableName: `${tableName}`,
             Item: obj
         };
-        let result;
-        result = await docClient.put(params, function (err, data) {
-            if (err) {
-                throw new Error(err.message)
-            } else {
-                return 'Пост успешно добавлен'
-            }
-        })
-    
+
+        await docClient.put(params)
+            .promise()
+            .catch(err => { throw new Error("Не удалось создать пост", err.message) })
     }
-    
+
     const deletePoster = (tableName, id) => {
-    
+
         var params = {
             Key: {
-                'id': `${id}`//указываем значение по первичному ключу
+                'id': `${id}`
             },
-            TableName: `${tableName}`// указываем названия таблицы
+            TableName: `${tableName}`
         };
-    
-        docClient.delete(params, function (err, data) {
-            if (err) {
-                throw new Error(err.message)
-            } else {
-                return 'Пост успешно удален'
-            }
-        });
+
+        docClient.delete(params)
+            .promise()
+            .catch(err => { throw new Error("Не удалось удалить пост", err.message) });
     }
-    
+
     const fetchAllPosters = async (tableName) => {
         let params = {
             TableName: `${tableName}`,
         };
         let scanResult = [];
         let items;
-        do {
-            items = await docClient.scan(params).promise()
-            items.Items.forEach((item) => scanResult.push(item))
-        } while (typeof items.LastEvaluatedKey != "undefined")
-    
+        items = await docClient.scan(params)
+            .promise()
+            .then(
+                response => response.Items.forEach(item => scanResult.push(item)),
+                err => { throw new Error("Ошибка при получении данных", err.message) }
+            )
+
         return scanResult
     }
-    
-    const updatePoster = (id, obj) => {
-        const { title, subtitle, discription ,src } = obj
+
+    const updatePoster = (obj) => {
+        const { title, subtitle, discription, src, id } = obj
+
         var params = {
             TableName: 'PostersList',
-            Key: {//пишем по какому ключу будем искать елемент 
+            Key: {
                 'id': `${id}`,
             },
-            UpdateExpression: 'set title = :a , subtitle = :b  , discription = :c , src = :d', //пишем какие параметры и значения нужно сменить в формате:
-            ExpressionAttributeValues: {//указываем значение параметров-шаблонов которые указали ранее
+            UpdateExpression: 'set title = :a , subtitle = :b  , discription = :c , src = :d',
+            ExpressionAttributeValues: {
                 ":a": `${title}`,
                 ":b": `${subtitle}`,
                 ":c": `${discription}`,
                 ":d": `${src}`
             }
         };
-    
-        docClient.update(params, function (err, data) {
-            if (err) {
-                console.log("Error", err);
-            } else {
-                console.log("Success", data);
-            }
-        });
+
+        docClient.update(params)
+            .promise()
+            .catch(err => { throw new Error("Не удалось обновить данные", err.message) });
     }
 
-    const fetchByKey =async (id) => {
+    const fetchByKey = async (id) => {
         let poster = {};
         let params = {
             TableName: 'PostersList',
-            Key: { "id": `${id}`}
+            Key: { "id": `${id}` }
         }
 
-        await docClient.get(params).promise().then(response => poster = response)
-
+        await docClient.get(params)
+            .promise()
+            .then(
+                response => poster = response,
+                err => { throw new Error("Данные по ключу не найдены", err.message) }
+            )
         return poster
     }
 
-    return {  addPoster , deletePoster , fetchAllPosters , updatePoster ,fetchByKey}
+    return { addPoster, deletePoster, fetchAllPosters, updatePoster, fetchByKey }
 }
 
-module.exports=postersService
+module.exports = postersService

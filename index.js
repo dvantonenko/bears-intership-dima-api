@@ -3,7 +3,7 @@ const path = require('path')
 const app = express()
 const posterRoutes = require('./src/routes/poster.route')
 const userRoutes = require('./src/routes/user.route')
-const songRoutes = require('./src/routes/song.route')
+
 
 
 
@@ -14,7 +14,6 @@ app.use(express.urlencoded({extended:true,limit:'50mb'}))
 app.use(express.json({ extended: true,limit:'50mb' }))
 app.use('/poster',posterRoutes)
 app.use('/user',userRoutes)
-app.use('/song',songRoutes )
 require('dotenv').config()
 
 const PORT = process.env.PORT || 3000
