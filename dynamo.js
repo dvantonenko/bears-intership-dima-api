@@ -3,7 +3,6 @@ let AWS = require('aws-sdk')
 let accessKeyId = process.env.aws_access_key_id
 let secretAccessKey = process.env.aws_secret_access_key
 
-
 let awsConfig = {
     "region": "us-east-2",
     "accessKeyId": accessKeyId,
@@ -124,5 +123,6 @@ const dynamoFunc = () => {
 
     return { fetchOneByKey, fetchAllItems, putItem, updateItem, deleteItem }
 }
+
 
 module.exports = dynamoFunc

@@ -26,7 +26,7 @@ const postersService = () => {
 
         await docClient.put(params)
             .promise()
-            .catch(err => { throw new Error("Не удалось создать пост", err.message) })
+            .catch(err => { throw new Error("Failed to create post", err.message) })
     }
 
     const deletePoster = (tableName, id) => {
@@ -40,7 +40,7 @@ const postersService = () => {
 
         docClient.delete(params)
             .promise()
-            .catch(err => { throw new Error("Не удалось удалить пост", err.message) });
+            .catch(err => { throw new Error("Failed to delete post", err.message) });
     }
 
     const fetchAllPosters = async (tableName) => {
@@ -53,32 +53,32 @@ const postersService = () => {
             .promise()
             .then(
                 response => response.Items.forEach(item => scanResult.push(item)),
-                err => { throw new Error("Ошибка при получении данных", err.message) }
+                err => { throw new Error("Error receiving data", err.message) }
             )
 
         return scanResult
     }
 
     const updatePoster = (obj) => {
-        const { title, subtitle, discription, src, id } = obj
+        const { title, subtitle, description, src, id } = obj
 
         var params = {
             TableName: 'PostersList',
             Key: {
                 'id': `${id}`,
             },
-            UpdateExpression: 'set title = :a , subtitle = :b  , discription = :c , src = :d',
+            UpdateExpression: 'set title = :a , subtitle = :b  , description = :c , src = :d',
             ExpressionAttributeValues: {
                 ":a": `${title}`,
                 ":b": `${subtitle}`,
-                ":c": `${discription}`,
+                ":c": `${description}`,
                 ":d": `${src}`
             }
         };
 
         docClient.update(params)
             .promise()
-            .catch(err => { throw new Error("Не удалось обновить данные", err.message) });
+            .catch(err => { throw new Error("Failed to update data", err.message) });
     }
 
     const fetchByKey = async (id) => {
@@ -92,7 +92,7 @@ const postersService = () => {
             .promise()
             .then(
                 response => poster = response,
-                err => { throw new Error("Данные по ключу не найдены", err.message) }
+                err => { throw new Error("Key data not found", err.message) }
             )
         return poster
     }
