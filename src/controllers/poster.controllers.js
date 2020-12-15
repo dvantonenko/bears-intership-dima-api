@@ -47,6 +47,7 @@ exports.getByIdController = async (req, res, next) => {
         res.status(200).json({ poster })
     } catch (e) {
         res.status(500).json({ message: 'Something went wrong, please try again', error: e.message  })
+        console.log('done')
     }
 }
 
