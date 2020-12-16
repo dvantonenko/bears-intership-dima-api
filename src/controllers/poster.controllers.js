@@ -3,7 +3,7 @@ const Poster = require('../models/poster.model')
 
 const { addPoster, deletePoster, fetchAllPosters, updatePoster, fetchByKey } = postersService()
 
-exports.addPosterController = async (req, res, next) => {
+exports.addPosterController = async (req, res) => {
     try {
         const data = await addPoster('PostersList', req.body)
         return res.status(200).json({ message: "Post added successfully" })
@@ -12,9 +12,10 @@ exports.addPosterController = async (req, res, next) => {
     }
 }
 
-exports.getPostersController = async (req, res, next) => {
+exports.getPostersController = async (req, res) => {
     try {
         const posters = await fetchAllPosters("PostersList")
+        console.log(posters.length)
         res.status(200).json({ posters })
     } catch (e) {
         console.log(e.message)
@@ -23,7 +24,7 @@ exports.getPostersController = async (req, res, next) => {
 
 }
 
-exports.deletePosterController = async (req, res, next) => {
+exports.deletePosterController = async (req, res) => {
     try {
         const { id } = req.body
         deletePoster('PostersList', id)
@@ -38,7 +39,7 @@ exports.deletePosterController = async (req, res, next) => {
 }
 
 
-exports.getByIdController = async (req, res, next) => {
+exports.getByIdController = async (req, res) => {
     try {
         const poster = await fetchByKey(req.params.id)
         if (!req.params.id) {
@@ -50,7 +51,7 @@ exports.getByIdController = async (req, res, next) => {
     }
 }
 
-exports.updatePosterConroller = async (req, res, next) => {
+exports.updatePosterConroller = async (req, res) => {
     try {
         updatePoster(req.body)
         res.status(200).json({ message: "Post updated" })
