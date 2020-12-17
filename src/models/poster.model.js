@@ -2,11 +2,11 @@ const { v4: uuid } = require('uuid');
 const fs = require('fs')
 const path = require('path');
 class Poster {
-    constructor(title, subtitle, discription, url, id) {
+    constructor(title, subtitle, description, src, id) {
         this.title = title,
             this.subtitle = subtitle,
-            this.discription = discription,
-            this.url = url,
+            this.description = description,
+            this.src = src,
             this.id = id
     }
 
@@ -14,8 +14,8 @@ class Poster {
         return {
             title: this.title,
             subtitle: this.subtitle,
-            discription: this.discription,
-            url: this.url,
+            description: this.description,
+            src: this.src,
             id: this.id
         }
     }

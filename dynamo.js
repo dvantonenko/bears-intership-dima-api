@@ -15,8 +15,7 @@ AWS.config.update(awsConfig)
 let docClient = new AWS.DynamoDB.DocumentClient()
 
 const dynamoFunc = () => {
-    //забрать 1 елемент по ключу
-    const fetchOneByKey = (artist, songTitle) => {//поиск по 1 ел
+    const fetchOneByKey = (artist, songTitle) => {
         let params = {
             TableName: 'Music',
             Key: { "Artist": `${artist}`, "Song Title": `${songTitle}` }
@@ -28,9 +27,8 @@ const dynamoFunc = () => {
             } else {
                 console.log(JSON.stringify(data, null, 2))
             }
-        })
+        }).then(response => console.log(response))
     }
-    // забрать все елементы таблицы
     const fetchAllItems = async (tableName = "Music") => {
         let params = {
             TableName: `${tableName}`,
@@ -43,26 +41,27 @@ const dynamoFunc = () => {
                     console.error("Scan wrong", JSON.stringify(err, null, 2));
                 }
                 console.log("Scan succeeded.");
-            }).promise()
+            })
+           
             items.Items.forEach((item) => scanResult.push(item))
 
-        }while (typeof items.LastEvaluatedKey != "undefined")
+        } while (typeof items.LastEvaluatedKey != "undefined")
 
         return scanResult
     }
-    // добавить 1 итем
+   
     const putItem = async (artist, songTitle) => {
         var params = {
             TableName: 'Music',
             Item: {
-                HashKey: 'haskey',// Эти поля необязательны , обазетелен только первичый ключ,остальные полня указываем сами
-                NumAttribute: 1,// --"--
-                BoolAttribute: true,// --"--
-                ListAttribute: [1, 'two', false],// --"--
-                MapAttribute: { foo: 'bar' },// --"--
-                NullAttribute: null,// --"--
-                "Artist": `${artist}`,//это поле обязательно           
-                "Song Title": `${songTitle}`// и это тоже
+                HashKey: 'haskey',
+                NumAttribute: 1,
+                BoolAttribute: true,
+                ListAttribute: [1, 'two', false],
+                MapAttribute: { foo: 'bar' },
+                NullAttribute: null,
+                "Artist": `${artist}`, 
+                "Song Title": `${songTitle}`
             }
         };
 
@@ -75,19 +74,19 @@ const dynamoFunc = () => {
         })
     }
 
-    // апдейт елемента: изменение существущих и добовление новых параметров
+
     const updateItem = (primaryKey) => {
         var params = {
             TableName: 'Books',
-            Key: {//тут пишем по какому ключу будем искать елемент 
+            Key: {
                 'Author': `${primaryKey}`,
             },
-            UpdateExpression: 'set TITLE = :x, #MyVariable = :y', // тут пишем какие параметры и значения нужно сменить в формате:
-            // Параметр(существующий) = :х(новое значение(шаблон)) , или  #MyVariable(мой параметр-шаблон) = :y(новое значение(шаблон))" 
+            UpdateExpression: 'set TITLE = :x, #MyVariable = :y', 
+           
             ExpressionAttributeNames: {
-                "#MyVariable": "Book"// тут указываем значение шаблона который указали ранее
+                "#MyVariable": "Book"
             },
-            ExpressionAttributeValues: {//тут указываем значение параметров-шаблонов которые указали ранее
+            ExpressionAttributeValues: {
                 ":x": "alex_title",
                 ":y": "Три мушкетера"
             }
@@ -102,13 +101,13 @@ const dynamoFunc = () => {
         });
     }
 
-    // удаление елемента из таблицы 
+   
     const deleteItem = (primaryKey) => {
         var params = {
             Key: {
-                'Author': `${primaryKey}`//указываем значение по первичному ключу
+                'Author': `${primaryKey}`
             },
-            TableName: 'Books'// указываем названия таблицы
+            TableName: 'Books'
         };
 
         docClient.delete(params, function (err, data) {
@@ -120,64 +119,8 @@ const dynamoFunc = () => {
         });
     }
 
-    const addPoster = async (tableName, obj) => {
-
-        var params = {
-            TableName: `${tableName}`,
-            Item: obj
-        };
-        let result;
-        result = await docClient.put(params, function (err, data) {
-            if (err) {
-                throw new Error(err.message)
-            } else {
-                return 'Пост успешно добавлен'
-            }
-        })
-
-    }
-
-    const deletePoster = (tableName, posterTitle) => {
-
-        var params = {
-            Key: {
-                'title': `${posterTitle}`//указываем значение по первичному ключу
-            },
-            TableName: `${tableName}`// указываем названия таблицы
-        };
-
-        docClient.delete(params, function (err, data) {
-            if (err) {
-                throw new Error(err.message)
-            } else {
-                return 'Пост успешно удален'
-            }
-        });
-    }
-
-    const fetchAllPosters = async (tableName ) => {
-        let params = {
-            TableName: `${tableName}`,
-        };
-        let scanResult = [];
-        let items;
-        do {
-            items = await docClient.scan( params 
-            //     ,(err , data ) => {
-            //     // if (err) {
-            //     //     console.error("Scan wrong", JSON.stringify(err, null, 2));
-            //     // }
-            //     // console.log("Scan succeeded." ,data);
-            // }
-            ).promise()
-            console.log(items)
-            items.Items.forEach((item) => scanResult.push(item))       
-        } while (typeof items.LastEvaluatedKey != "undefined")
-
-        return scanResult
-    }
-
-    return { fetchOneByKey, fetchAllItems, putItem, updateItem, deleteItem, addPoster, deletePoster , fetchAllPosters }
+    return { fetchOneByKey, fetchAllItems, putItem, updateItem, deleteItem }
 }
+
 
 module.exports = dynamoFunc
