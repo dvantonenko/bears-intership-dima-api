@@ -15,7 +15,6 @@ exports.addPosterController = async (req, res) => {
 exports.getPostersController = async (req, res) => {
     try {
         const posters = await fetchAllPosters("PostersList")
-        console.log(posters.length)
         res.status(200).json({ posters })
     } catch (e) {
         console.log(e.message)

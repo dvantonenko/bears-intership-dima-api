@@ -52,8 +52,8 @@ const postersService = () => {
         items = await docClient.scan(params)
             .promise()
             .then(
-                response => response.Items.forEach(item => scanResult.push(item)),
-                err => { throw new Error("Error receiving data", err.message) }
+                response =>{response.Items.forEach(item => scanResult.push(item))} ,
+                err => { throw new Error("Error recieved data", err) }
             )
 
         return scanResult
