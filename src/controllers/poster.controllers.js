@@ -1,7 +1,6 @@
 const postersService = require('../services/posters.services')
-const Poster = require('../models/poster.model')
 
-const { addPoster, deletePoster, fetchAllPosters, updatePoster, fetchByKey } = postersService()
+const { addPoster, deletePoster, fetchAllPosters, updatePoster, fetchByKey, fetchQueryPosters } = postersService()
 
 exports.addPosterController = async (req, res) => {
     try {
@@ -14,11 +13,12 @@ exports.addPosterController = async (req, res) => {
 
 exports.getPostersController = async (req, res) => {
     try {
-        const posters = await fetchAllPosters("PostersList")
-        res.status(200).json({ posters })
+        const { currentPage, postersPerPage } = req.query
+        const posters = await fetchAllPosters("PostersList", currentPage, postersPerPage)
+        res.status(200).json({ posters})
     } catch (e) {
         console.log(e.message)
-        res.status(500).json({ message: "Server error, try again" , error: e.message  })
+        res.status(500).json({ message: "Server error, try again", error: e.message })
     }
 
 }
@@ -32,7 +32,7 @@ exports.deletePosterController = async (req, res) => {
         }
         res.status(200).json({ message: "Post successfully deleted" })
     } catch (e) {
-        res.status(500).json({ message: 'Something went wrong, please try again', error: e.message  })
+        res.status(500).json({ message: 'Something went wrong, please try again', error: e.message })
     }
 
 }
@@ -46,7 +46,7 @@ exports.getByIdController = async (req, res) => {
         }
         res.status(200).json({ poster })
     } catch (e) {
-        res.status(500).json({ message: 'Something went wrong, please try again', error: e.message  })
+        res.status(500).json({ message: 'Something went wrong, please try again', error: e.message })
     }
 }
 
@@ -55,7 +55,7 @@ exports.updatePosterConroller = async (req, res) => {
         updatePoster(req.body)
         res.status(200).json({ message: "Post updated" })
     } catch (e) {
-        res.status(500).json({ message: 'Data refresh error, please try again', error: e.message  })
+        res.status(500).json({ message: 'Data refresh error, please try again', error: e.message })
     }
 
 }

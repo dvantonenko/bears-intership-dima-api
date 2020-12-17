@@ -43,20 +43,27 @@ const postersService = () => {
             .catch(err => { throw new Error("Failed to delete post", err.message) });
     }
 
-    const fetchAllPosters = async (tableName) => {
+    const fetchAllPosters = async (tableName, currentPage, postersPerPage) => {
+
         let params = {
             TableName: `${tableName}`,
         };
-        let scanResult = [];
-        let items;
-        items = await docClient.scan(params)
+
+        let queryResult = []
+        let postersLength
+        await docClient.scan(params)
             .promise()
             .then(
-                response =>{response.Items.forEach(item => scanResult.push(item))} ,
+                response => {
+                    const indexOfLast = currentPage * postersPerPage
+                    const indexOfFirst = indexOfLast - postersPerPage
+                    postersLength=response.Items.length
+                    queryResult = response.Items.slice(indexOfFirst, indexOfLast)
+                },
                 err => { throw new Error("Error recieved data", err) }
             )
 
-        return scanResult
+        return { queryResult, postersLength}
     }
 
     const updatePoster = (obj) => {
@@ -97,7 +104,21 @@ const postersService = () => {
         return poster
     }
 
-    return { addPoster, deletePoster, fetchAllPosters, updatePoster, fetchByKey }
+    const fetchQueryPosters = async (id) => {
+        var params = {
+            ExpressionAttributeValues: {
+                ":v1": {
+                    S: `${id}`
+                }
+            },
+            KeyConditionExpression: "id = :v1",
+            TableName: "PostersList"
+        }
+
+        docClient.query(params).promise().then(response => console.log(response))
+    }
+
+    return { addPoster, deletePoster, fetchAllPosters, updatePoster, fetchByKey, fetchQueryPosters }
 }
 
 module.exports = postersService
