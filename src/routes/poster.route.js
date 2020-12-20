@@ -8,7 +8,7 @@ router.post('/add', controller.addPosterController)
 
 router.post('/delete', controller.deletePosterController)
 
-router.get('/:id',controller.getByIdController)
+router.get('/update/:id',controller.getByIdController)
 
 router.post('/update', controller.updatePosterConroller)
 

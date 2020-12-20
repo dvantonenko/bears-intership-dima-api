@@ -18,7 +18,6 @@ let docClient = new AWS.DynamoDB.DocumentClient()
 const postersService = () => {
 
     const addPoster = async (tableName, obj) => {
-
         var params = {
             TableName: `${tableName}`,
             Item: obj
@@ -26,7 +25,7 @@ const postersService = () => {
 
         await docClient.put(params)
             .promise()
-            .catch(err => { throw new Error("Failed to create post", err.message) })
+            .catch(err => { throw new Error("Failed to create post", console.log(err)) })
     }
 
     const deletePoster = (tableName, id) => {
@@ -39,24 +38,33 @@ const postersService = () => {
         };
 
         docClient.delete(params)
-            .promise()
+            .promise().then(res => console.log(res))
             .catch(err => { throw new Error("Failed to delete post", err.message) });
     }
 
-    const fetchAllPosters = async (tableName) => {
+    const fetchAllPosters = async (tableName, currentPage, postersPerPage) => {
+        const start = Date.now()
+        let indexOfLast = currentPage * postersPerPage
+        let indexOfFirst = indexOfLast - postersPerPage
+        let queryResult = []
+        let postersLength
         let params = {
             TableName: `${tableName}`,
         };
-        let scanResult = [];
-        let items;
-        items = await docClient.scan(params)
+
+
+        await docClient.scan(params)
             .promise()
             .then(
-                response => response.Items.forEach(item => scanResult.push(item)),
-                err => { throw new Error("Error receiving data", err.message) }
-            )
+                response => {
+                    postersLength = response.Items.length
+                    queryResult = response.Items.slice(indexOfFirst, indexOfLast)
 
-        return scanResult
+                },
+                err => { throw new Error("Error recieved data", err) }
+            )
+        console.log(Date.now() - start)
+        return { queryResult, postersLength }
     }
 
     const updatePoster = (obj) => {
