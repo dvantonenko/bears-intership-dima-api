@@ -18,7 +18,6 @@ let docClient = new AWS.DynamoDB.DocumentClient()
 const postersService = () => {
 
     const addPoster = async (tableName, obj) => {
-
         var params = {
             TableName: `${tableName}`,
             Item: obj
@@ -26,7 +25,7 @@ const postersService = () => {
 
         await docClient.put(params)
             .promise()
-            .catch(err => { throw new Error("Failed to create post", err.message) })
+            .catch(err => { throw new Error("Failed to create post", console.log(err)) })
     }
 
     const deletePoster = (tableName, id) => {
@@ -39,31 +38,33 @@ const postersService = () => {
         };
 
         docClient.delete(params)
-            .promise()
+            .promise().then(res => console.log(res))
             .catch(err => { throw new Error("Failed to delete post", err.message) });
     }
 
     const fetchAllPosters = async (tableName, currentPage, postersPerPage) => {
-
+        const start = Date.now()
+        let indexOfLast = currentPage * postersPerPage
+        let indexOfFirst = indexOfLast - postersPerPage
+        let queryResult = []
+        let postersLength
         let params = {
             TableName: `${tableName}`,
         };
 
-        let queryResult = []
-        let postersLength
+
         await docClient.scan(params)
             .promise()
             .then(
                 response => {
-                    const indexOfLast = currentPage * postersPerPage
-                    const indexOfFirst = indexOfLast - postersPerPage
-                    postersLength=response.Items.length
+                    postersLength = response.Items.length
                     queryResult = response.Items.slice(indexOfFirst, indexOfLast)
+
                 },
                 err => { throw new Error("Error recieved data", err) }
             )
-
-        return { queryResult, postersLength}
+        console.log(Date.now() - start)
+        return { queryResult, postersLength }
     }
 
     const updatePoster = (obj) => {
@@ -104,21 +105,7 @@ const postersService = () => {
         return poster
     }
 
-    const fetchQueryPosters = async (id) => {
-        var params = {
-            ExpressionAttributeValues: {
-                ":v1": {
-                    S: `${id}`
-                }
-            },
-            KeyConditionExpression: "id = :v1",
-            TableName: "PostersList"
-        }
-
-        docClient.query(params).promise().then(response => console.log(response))
-    }
-
-    return { addPoster, deletePoster, fetchAllPosters, updatePoster, fetchByKey, fetchQueryPosters }
+    return { addPoster, deletePoster, fetchAllPosters, updatePoster, fetchByKey }
 }
 
 module.exports = postersService

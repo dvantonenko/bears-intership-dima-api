@@ -1,12 +1,16 @@
 const postersService = require('../services/posters.services')
-
+const s3 = require('../../s3bucket')
 const { addPoster, deletePoster, fetchAllPosters, updatePoster, fetchByKey, fetchQueryPosters } = postersService()
+const { putToBucket, getFromBucket } = s3()
 
 exports.addPosterController = async (req, res) => {
     try {
-        const data = await addPoster('PostersList', req.body)
+        const { task, file } = req.body
+        await putToBucket(Buffer.from(file, 'utf-8'), task.key)
+        await addPoster('PostersList', task)
         return res.status(200).json({ message: "Post added successfully" })
     } catch (e) {
+        console.log(e)
         return res.status(500).json({ message: "Check if the input data is correct", error: e.message })
     }
 }
@@ -15,7 +19,11 @@ exports.getPostersController = async (req, res) => {
     try {
         const { currentPage, postersPerPage } = req.query
         const posters = await fetchAllPosters("PostersList", currentPage, postersPerPage)
-        res.status(200).json({ posters})
+        if (posters.queryResult)
+            for (let i = 0; i < posters.queryResult.length; i++) {
+                posters.queryResult[i].src = await getFromBucket(posters.queryResult[i].key)
+            }
+        res.status(200).json({ posters })
     } catch (e) {
         console.log(e.message)
         res.status(500).json({ message: "Server error, try again", error: e.message })
@@ -41,6 +49,8 @@ exports.deletePosterController = async (req, res) => {
 exports.getByIdController = async (req, res) => {
     try {
         const poster = await fetchByKey(req.params.id)
+        poster.Item.src = await getFromBucket(poster.Item.key)
+
         if (!req.params.id) {
             res.status(400).json({ message: "Invalid identifier" })
         }
