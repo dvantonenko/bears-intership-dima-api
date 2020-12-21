@@ -28,8 +28,8 @@ const postersService = () => {
             .catch(err => { throw new Error("Failed to create post", console.log(err)) })
     }
 
-    const deletePoster = (tableName, id) => {
-
+    const deletePoster = (tableName, obj) => {
+        const { id } = obj
         var params = {
             Key: {
                 'id': `${id}`
@@ -38,38 +38,13 @@ const postersService = () => {
         };
 
         docClient.delete(params)
-            .promise().then(res => console.log(res))
+            .promise().then()
             .catch(err => { throw new Error("Failed to delete post", err.message) });
+
     }
 
-    const fetchAllPosters = async (tableName, currentPage, postersPerPage) => {
-        const start = Date.now()
-        let indexOfLast = currentPage * postersPerPage
-        let indexOfFirst = indexOfLast - postersPerPage
-        let queryResult = []
-        let postersLength
-        let params = {
-            TableName: `${tableName}`,
-        };
-
-
-        await docClient.scan(params)
-            .promise()
-            .then(
-                response => {
-                    postersLength = response.Items.length
-                    queryResult = response.Items.slice(indexOfFirst, indexOfLast)
-
-                },
-                err => { throw new Error("Error recieved data", err) }
-            )
-        console.log(Date.now() - start)
-        return { queryResult, postersLength }
-    }
-
-    const updatePoster = (obj) => {
+    const updatePoster = async (obj) => {
         const { title, subtitle, description, src, id } = obj
-
         var params = {
             TableName: 'PostersList',
             Key: {
@@ -84,9 +59,34 @@ const postersService = () => {
             }
         };
 
-        docClient.update(params)
+        await docClient.update(params)
             .promise()
-            .catch(err => { throw new Error("Failed to update data", err.message) });
+            .catch(err => {
+                throw new Error("Failed to update data", err.message)
+            });
+    }
+
+    const fetchAllPosters = async (tableName, currentPage, postersPerPage) => {
+        const start = Date.now()
+        let indexOfLast = currentPage * postersPerPage
+        let indexOfFirst = indexOfLast - postersPerPage
+        let queryResult = []
+        let postersLength
+        let params = {
+            TableName: `${tableName}`,
+        };
+        await docClient.scan(params)
+            .promise()
+            .then(
+                response => {
+                    postersLength = response.Items.length
+                    queryResult = response.Items.slice(indexOfFirst, indexOfLast)
+                },
+                err => { throw new Error("Error recieved data", err) }
+            )
+
+        console.log(Date.now() - start)
+        return { queryResult, postersLength }
     }
 
     const fetchByKey = async (id) => {
