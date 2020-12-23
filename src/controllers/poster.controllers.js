@@ -16,16 +16,9 @@ exports.addPosterController = async (req, res) => {
 
 exports.getPostersController = async (req, res) => {
     try {
-        const { currentPage, postersPerPage , listId} = req.query
+        const { currentPage, postersPerPage, listId } = req.query
 
-            const posters = await fetchAllPosters("PostersList", currentPage, postersPerPage , listId)
-        
-      
-
-        // if (posters.queryResult)
-        //     for (let i = 0; i < posters.queryResult.length; i++) {
-        //         posters.queryResult[i].src = await getFromBucket(posters.queryResult[i].key)
-        //     }
+        const posters = await fetchAllPosters("PostersList", currentPage, postersPerPage, listId)
         res.status(200).json({ posters })
     } catch (e) {
         console.log(e)
@@ -51,7 +44,6 @@ exports.deletePosterController = async (req, res) => {
 
 exports.getByIdController = async (req, res) => {
     try {
-        console.log(req.params)
         const poster = await fetchByKey(req.params.id)
 
         poster.Item.src = await getFromBucket(poster.Item.key)

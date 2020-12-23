@@ -30,7 +30,6 @@ const postersService = () => {
 
     const deletePoster = (tableName, obj) => {
         const { id } = obj
-        console.log(typeof Number(id))
         var params = {
             Key: {
                 'id': Number(id)
