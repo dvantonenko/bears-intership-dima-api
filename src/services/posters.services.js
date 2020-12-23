@@ -88,18 +88,18 @@ const postersService = () => {
 
     const fetchAllPosters = async (tableName, currentPage, postersPerPage, listId) => {
 
+        
         let indexOfLast = currentPage * postersPerPage
         let indexOfFirst = indexOfLast - postersPerPage
-
         let params = {
             TableName: `${tableName}`,
             FilterExpression: postersPerPage === 1 ? ' id = :first ' : 'id between :first and :last',
             ExpressionAttributeValues: postersPerPage === 1 ? {
-                ':first': Number(listId[indexOfFirst]),
+                ':first': listId.length &&  Number(listId[indexOfFirst]),
 
             } : {
-                    ':first': Number(listId[indexOfFirst]),
-                    ':last': listId[indexOfLast - 1] ? Number(listId[indexOfLast - 1]) : Number(listId[listId.length - 1]),
+                    ':first': listId.length &&  Number(listId[indexOfFirst]),
+                    ':last':  listId.length && ( listId[indexOfLast - 1] ? Number(listId[indexOfLast - 1]) : Number(listId[listId.length - 1])),
                 },
             Limit: 1000,
         }
@@ -119,8 +119,9 @@ const postersService = () => {
             console.log(error);
         }
 
-        postersLength = listId.length
+        postersLength =  listId.length
         return { queryResult, postersLength }
+    
     }
 
     const fetchByKey = async (id) => {

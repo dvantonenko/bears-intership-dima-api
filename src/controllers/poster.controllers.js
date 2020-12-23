@@ -18,7 +18,7 @@ exports.getPostersController = async (req, res) => {
     try {
         const { currentPage, postersPerPage, listId } = req.query
 
-        const posters = await fetchAllPosters("PostersList", currentPage, postersPerPage, listId)
+        const posters = await fetchAllPosters("PostersList", currentPage, postersPerPage, listId || [])
         res.status(200).json({ posters })
     } catch (e) {
         console.log(e)
