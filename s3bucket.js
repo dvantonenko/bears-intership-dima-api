@@ -64,7 +64,8 @@ const s3Bucket = () => {
             Key: `${key}`,
             Body: file
         }
-        await s3.upload(params).promise().then(response => console.log('Item was upload'),
+    
+        await s3.upload(params).promise().then(response => console.log(response,'Item was upload'),
             err => { throw new Error(err) })
     }
 
