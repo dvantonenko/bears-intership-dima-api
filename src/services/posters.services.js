@@ -48,7 +48,7 @@ const postersService = () => {
         var params = {
             TableName: 'PostersList',
             Key: {
-                'id': `${id}`,
+                'id': Number(id),
             },
             UpdateExpression: 'set title = :a , subtitle = :b  , description = :c , src = :d',
             ExpressionAttributeValues: {
@@ -63,6 +63,7 @@ const postersService = () => {
         await docClient.update(params)
             .promise()
             .catch(err => {
+                console.log(err)
                 throw new Error("Failed to update data", err.message)
             });
     }
