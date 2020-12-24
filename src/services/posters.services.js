@@ -68,60 +68,22 @@ const postersService = () => {
             });
     }
 
-    const getAllData = async (params) => {
-
-        let data = await docClient.scan(params).promise();
-
-        if (data['Items'].length > 0) {
-            let allData = []
-            allData = [...allData, ...data['Items']];
-        }
-
-        if (data.LastEvaluatedKey) {
-            params.ExclusiveStartKey = data.LastEvaluatedKey;
-            return await getAllData(params);
-
-        } else {
-            return data
-        }
-    }
-
-    const fetchAllPosters = async (tableName, currentPage, postersPerPage, listId) => {
-
-        
-        let indexOfLast = currentPage * postersPerPage
-        let indexOfFirst = indexOfLast - postersPerPage
+    const fetchAllPosters = async (tableName, currentPage, postersPerPage, lastKey) => {
         let params = {
             TableName: `${tableName}`,
-            FilterExpression: postersPerPage === 1 ? ' id = :first ' : 'id between :first and :last',
-            ExpressionAttributeValues: postersPerPage === 1 ? {
-                ':first': listId.length &&  Number(listId[indexOfFirst]),
-
-            } : {
-                    ':first': listId.length &&  Number(listId[indexOfFirst]),
-                    ':last':  listId.length && ( listId[indexOfLast - 1] ? Number(listId[indexOfLast - 1]) : Number(listId[listId.length - 1])),
-                },
-            Limit: 1000,
+            ExclusiveStartKey: lastKey ? { id: Number(lastKey) } : undefined,
+            Limit: postersPerPage
         }
+
         let queryResult = []
-        let postersLength = null
-        try {
-            let response = await getAllData(params);
-            queryResult = response.Items
+        let lastElemKey = undefined;
+        let data = await docClient.scan(params).promise()
 
-            function sort(arr) {
-                arr.sort((a, b) => a.id > b.id ? 1 : -1);
-            }
-            sort(queryResult)
-
+        if (data.LastEvaluatedKey) { lastElemKey = data.LastEvaluatedKey } else {
+            lastElemKey = 0
         }
-        catch (error) {
-            console.log(error);
-        }
-
-        postersLength =  listId.length
-        return { queryResult, postersLength }
-    
+        queryResult = data.Items
+        return { queryResult, lastElemKey }
     }
 
     const fetchByKey = async (id) => {
