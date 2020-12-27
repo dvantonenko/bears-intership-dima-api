@@ -1,12 +1,9 @@
-var fs = require('fs')
-var path = require('path')
 var AWS = require('aws-sdk');
-const crypto = require('crypto')
 
 let awsConfig = {
     "region": "us-east-2",
-    "accessKeyId": 'AKIAZWKDUOQJDGQDQIWC',
-    "secretAccessKey": "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",
+    "accessKeyId": process.env.ACCESS_KEY_ID,
+    "secretAccessKey": process.env.SECRE_ACCESS_KEY,
 }
 
 AWS.config.setPromisesDependency();

@@ -74,7 +74,6 @@ const postersService = () => {
             ExclusiveStartKey: lastKey ? { id: Number(lastKey) } : undefined,
             Limit: postersPerPage
         }
-
         let queryResult = []
         let lastElemKey = undefined;
         let data = await docClient.scan(params).promise()

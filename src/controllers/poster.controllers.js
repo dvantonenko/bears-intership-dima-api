@@ -10,7 +10,7 @@ exports.addPosterController = async (req, res) => {
         await addPoster('PostersList', task)
         return res.status(200).json({ message: "Post added successfully" })
     } catch (e) {
-        return res.status(500).json({ errorMessage: "Check if the input data is correct", error: e.message })
+        return res.status(500).json({ errorMessage: "Check if the input data is correct", error: e })
     }
 }
 
