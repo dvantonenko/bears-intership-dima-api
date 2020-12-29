@@ -28,52 +28,28 @@ const postersService = () => {
             .catch(err => { throw new Error("Failed to create post", console.log(err)) })
     }
 
-    const deletePoster = (tableName, id) => {
-
+    const deletePoster = (tableName, obj) => {
+        const { id } = obj
         var params = {
             Key: {
-                'id': `${id}`
+                'id': Number(id) ,
+                'Posts' : 'posts'
             },
             TableName: `${tableName}`
         };
 
         docClient.delete(params)
-            .promise().then(res => console.log(res))
+            .promise().then()
             .catch(err => { throw new Error("Failed to delete post", err.message) });
     }
 
-    const fetchAllPosters = async (tableName, currentPage, postersPerPage) => {
-        const start = Date.now()
-        let indexOfLast = currentPage * postersPerPage
-        let indexOfFirst = indexOfLast - postersPerPage
-        let queryResult = []
-        let postersLength
-        let params = {
-            TableName: `${tableName}`,
-        };
-
-
-        await docClient.scan(params)
-            .promise()
-            .then(
-                response => {
-                    postersLength = response.Items.length
-                    queryResult = response.Items.slice(indexOfFirst, indexOfLast)
-
-                },
-                err => { throw new Error("Error recieved data", err) }
-            )
-        console.log(Date.now() - start)
-        return { queryResult, postersLength }
-    }
-
-    const updatePoster = (obj) => {
+    const updatePoster = async (obj) => {
         const { title, subtitle, description, src, id } = obj
-
         var params = {
-            TableName: 'PostersList',
+            TableName: 'PosterLists',
             Key: {
-                'id': `${id}`,
+                'id': Number(id),
+                'Posts' : 'posts'
             },
             UpdateExpression: 'set title = :a , subtitle = :b  , description = :c , src = :d',
             ExpressionAttributeValues: {
@@ -82,18 +58,42 @@ const postersService = () => {
                 ":c": `${description}`,
                 ":d": `${src}`
             }
+
         };
 
-        docClient.update(params)
+        await docClient.update(params)
             .promise()
-            .catch(err => { throw new Error("Failed to update data", err.message) });
+            .catch(err => {
+                console.log(err)
+                throw new Error("Failed to update data", err.message)
+            });
     }
+
+    const fetchAllPosters = async (tableName, currentPage, postersPerPage, lastKey) => {
+        var params = {
+            ExpressionAttributeValues: {
+                ":v1": 'posts',
+            },
+            ExclusiveStartKey: lastKey ? { id: Number(lastKey) , Posts : 'posts' } : undefined,
+            KeyConditionExpression: "Posts = :v1",
+            TableName: `${tableName}`,
+            Limit : 2
+        };
+        const data = await docClient.query(params).promise()
+       if (data.LastEvaluatedKey) { lastElemKey = data.LastEvaluatedKey } else {
+            lastElemKey = 0
+        }
+        queryResult = data.Items
+        console.log(lastElemKey)
+        return { queryResult, lastElemKey }
+    }
+
 
     const fetchByKey = async (id) => {
         let poster = {};
         let params = {
-            TableName: 'PostersList',
-            Key: { "id": `${id}` }
+            TableName: 'PosterLists',
+            Key: { "id": Number(id) , "Posts" : 'posts'}
         }
 
         await docClient.get(params)

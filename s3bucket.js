@@ -1,12 +1,9 @@
-var fs = require('fs')
-var path = require('path')
 var AWS = require('aws-sdk');
-const crypto = require('crypto')
 
 let awsConfig = {
     "region": "us-east-2",
-    "accessKeyId": 'AKIAZWKDUOQJDGQDQIWC',
-    "secretAccessKey": "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",
+    "accessKeyId": process.env.ACCESS_KEY_ID,
+    "secretAccessKey": process.env.SECRE_ACCESS_KEY,
 }
 
 AWS.config.setPromisesDependency();
@@ -62,9 +59,11 @@ const s3Bucket = () => {
         })
         var params = {
             Key: `${key}`,
-            Body: file
+            Body: file ,
+            ACL : 'public-read'
         }
-        await s3.upload(params).promise().then(response => console.log('Item was upload'),
+    
+        await s3.upload(params).promise().then(response => console.log(response,'Item was upload'),
             err => { throw new Error(err) })
     }
 
