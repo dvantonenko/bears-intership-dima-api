@@ -60,7 +60,7 @@ const s3Bucket = () => {
         var params = {
             Key: `${key}`,
             Body: file ,
-            ACL : 'public-read'
+            ACL : 'public-read',
         }
     
         await s3.upload(params).promise().then(response => console.log(response,'Item was upload'),

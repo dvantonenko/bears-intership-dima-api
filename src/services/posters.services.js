@@ -32,8 +32,8 @@ const postersService = () => {
         const { id } = obj
         var params = {
             Key: {
-                'id': Number(id) ,
-                'Posts' : 'posts'
+                'id': Number(id),
+                'Posts': 'posts'
             },
             TableName: `${tableName}`
         };
@@ -49,7 +49,7 @@ const postersService = () => {
             TableName: 'PosterLists',
             Key: {
                 'id': Number(id),
-                'Posts' : 'posts'
+                'Posts': 'posts'
             },
             UpdateExpression: 'set title = :a , subtitle = :b  , description = :c , src = :d',
             ExpressionAttributeValues: {
@@ -74,26 +74,25 @@ const postersService = () => {
             ExpressionAttributeValues: {
                 ":v1": 'posts',
             },
-            ExclusiveStartKey: lastKey ? { id: Number(lastKey) , Posts : 'posts' } : undefined,
+            ExclusiveStartKey: lastKey ? { id: Number(lastKey), Posts: 'posts' } : undefined,
             KeyConditionExpression: "Posts = :v1",
             TableName: `${tableName}`,
-            Limit : 2
+            Limit: 2
         };
         const data = await docClient.query(params).promise()
-       if (data.LastEvaluatedKey) { lastElemKey = data.LastEvaluatedKey } else {
+        if (data.LastEvaluatedKey) { lastElemKey = data.LastEvaluatedKey } 
+        else {
             lastElemKey = 0
         }
         queryResult = data.Items
-        console.log(lastElemKey)
         return { queryResult, lastElemKey }
     }
-
 
     const fetchByKey = async (id) => {
         let poster = {};
         let params = {
             TableName: 'PosterLists',
-            Key: { "id": Number(id) , "Posts" : 'posts'}
+            Key: { "id": Number(id), "Posts": 'posts' }
         }
 
         await docClient.get(params)
@@ -105,7 +104,7 @@ const postersService = () => {
         return poster
     }
 
-    return { addPoster, deletePoster, fetchAllPosters, updatePoster, fetchByKey }
+    return { addPoster, deletePoster, fetchAllPosters, updatePoster, fetchByKey  }
 }
 
 module.exports = postersService

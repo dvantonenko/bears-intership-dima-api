@@ -4,10 +4,10 @@ const app = express()
 const posterRoutes = require('./src/routes/poster.route')
 const userRoutes = require('./src/routes/user.route')
 
-
-
-
 const cors = require('cors')
+
+
+
 app.use(cors())
 app.use(express.static(__dirname+'/public'))
 app.use(express.urlencoded({extended:true,limit:'500mb'}))
