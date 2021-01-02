@@ -3,7 +3,7 @@ var AWS = require('aws-sdk');
 let awsConfig = {
     "region": "us-east-2",
     "accessKeyId": process.env.ACCESS_KEY_ID,
-    "secretAccessKey": process.env.SECRE_ACCESS_KEY,
+    "secretAccessKey": process.env.SECRET_ACCESS_KEY,
 }
 
 AWS.config.setPromisesDependency();
