@@ -10,7 +10,6 @@ AWS.config.setPromisesDependency();
 AWS.config.update(awsConfig)
 
 const s3Bucket = () => {
-
     const s3 = new AWS.S3();
 
     const createBucket = () => {

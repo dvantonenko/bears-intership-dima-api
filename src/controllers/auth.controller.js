@@ -1,14 +1,20 @@
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js')
-
+const AWS = require('aws-sdk');
 require('dotenv').config()
 
 const poolData = {
-    UserPoolId:process.env.USER_POOL_ID,
+    UserPoolId: process.env.USER_POOL_ID,
     ClientId: process.env.APP_CLIENT_ID
 }
 
 const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData)
 
+const getPasswordErrors = (request, source) => {
+    request.check('password', "Pssword must be at least 6 characters long.").isLength({ min: 6 })
+    request.check('password', "Password must contain a number.").matches(/[0-9]/)
+    request.check('password', "Password must contain lower case letter.").matches(/[a-z]/)
+    request.check('password', "Password must contain an upper case letter.").matches(/[A-Z]/)
+}
 // auth/register
 exports.registerController = async (req, res) => {
     try {
@@ -41,6 +47,7 @@ exports.registerController = async (req, res) => {
 exports.loginHandler = async (req, res) => {
     try {
         const { email, password } = req.body
+
         const loginDetails = {
             Username: email,
             Password: password
@@ -54,16 +61,29 @@ exports.loginHandler = async (req, res) => {
         }
 
         const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userDetails)
-
+        
         const data = cognitoUser.authenticateUser(authenticationDetails, {
             onSuccess: data => {
-                return res.json(data)
+                var accessToken = data.getAccessToken().getJwtToken();
+
+                if (cognitoUser != null) {
+                    cognitoUser.getSession(function (err, session) {
+                        if (err) {
+                            console.log(err.message);
+                            return;
+                        }
+                        console.log('session',session)
+                    }
+                    )
+                }
+
+                return res.json(accessToken)
             },
             onFailure: err => {
                 return res.json(err)
             }
         })
-
+        
     } catch (e) {
         throw new Error(e)
     }

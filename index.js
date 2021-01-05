@@ -4,10 +4,18 @@ const app = express()
 const posterRoutes = require('./src/routes/poster.route')
 const userRoutes = require('./src/routes/user.route')
 const authRoutes = require('./src/routes/auth.route')
-
 const cors = require('cors')
 
+var AWS = require('aws-sdk');
 
+let awsConfig = {
+    "region": "us-east-2",
+    "accessKeyId": process.env.ACCESS_KEY_ID,
+    "secretAccessKey": process.env.SECRET_ACCESS_KEY,
+}
+
+AWS.config.setPromisesDependency();
+AWS.config.update(awsConfig)
 
 app.use(cors())
 app.use(express.static(__dirname+'/public'))
