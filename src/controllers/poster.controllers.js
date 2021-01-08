@@ -5,6 +5,7 @@ const { putToBucket, getFromBucket } = s3()
 
 exports.addPosterController = async (req, res) => {
     try {
+        console.log('request token  from add' ,req.headers.accesstoken)
         const { task, file } = req.body
         await putToBucket(Buffer.from(file, 'utf-8'), task.key)
         await addPoster('PosterLists', task)
@@ -51,7 +52,6 @@ exports.getByIdController = async (req, res) => {
         }
         res.status(200).json(poster)
     } catch (e) {
-
         res.status(500).json({ errorMessage: 'Something went wrong, please try again', error: e.message })
     }
 }
@@ -61,7 +61,6 @@ exports.updatePosterConroller = async (req, res) => {
         updatePoster(req.body)
         res.status(200).json({ message: "Post updated" })
     } catch (e) {
-
         res.status(500).json({ errorMessage: 'Data refresh error, please try again', error: e.message })
     }
 

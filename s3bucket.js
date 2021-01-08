@@ -62,7 +62,7 @@ const s3Bucket = () => {
             ACL : 'public-read',
         }
     
-        await s3.upload(params).promise().then(response => console.log(response,'Item was upload'),
+        await s3.upload(params).promise().then(response => console.log('Item was upload'),
             err => { throw new Error(err) })
     }
 
