@@ -61,10 +61,10 @@ exports.loginHandler = async (req, res) => {
         }
 
         const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userDetails)
-        
+
         const data = cognitoUser.authenticateUser(authenticationDetails, {
             onSuccess: data => {
-                var accessToken = data.getAccessToken().getJwtToken();
+                let accessToken = data.getAccessToken().getJwtToken();
 
                 if (cognitoUser != null) {
                     cognitoUser.getSession(function (err, session) {
@@ -72,19 +72,22 @@ exports.loginHandler = async (req, res) => {
                             console.log(err.message);
                             return;
                         }
-                        console.log('session',session)
                     }
                     )
                 }
 
-                return res.json(accessToken)
+                return res.json({accessToken})
             },
             onFailure: err => {
                 return res.json(err)
             }
         })
-        
+
     } catch (e) {
         throw new Error(e)
     }
+}
+
+exports.logoutHandler = async (req, res) => {
+
 }
