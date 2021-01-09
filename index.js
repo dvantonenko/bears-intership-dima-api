@@ -29,6 +29,7 @@ require('dotenv').config()
 
 const PORT = process.env.PORT || 3000
 
+const arr= [ { dog : 'vav'},]
 async function start() {
     try {
         app.listen(PORT, () => {

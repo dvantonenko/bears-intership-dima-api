@@ -5,7 +5,7 @@ const { putToBucket, getFromBucket } = s3()
 
 exports.addPosterController = async (req, res) => {
     try {
-        console.log('request token  from add' ,req.headers.accesstoken)
+
         const { task, file } = req.body
         await putToBucket(Buffer.from(file, 'utf-8'), task.key)
         await addPoster('PosterLists', task)

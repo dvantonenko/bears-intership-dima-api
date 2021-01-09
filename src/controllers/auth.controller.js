@@ -65,18 +65,19 @@ exports.loginHandler = async (req, res) => {
         const data = cognitoUser.authenticateUser(authenticationDetails, {
             onSuccess: data => {
                 let accessToken = data.getAccessToken().getJwtToken();
-
+                let username = data.getAccessToken().payload.username
                 if (cognitoUser != null) {
                     cognitoUser.getSession(function (err, session) {
                         if (err) {
                             console.log(err.message);
                             return;
                         }
+
                     }
                     )
                 }
 
-                return res.json({accessToken})
+                return res.json({ accessToken, username })
             },
             onFailure: err => {
                 return res.json(err)
