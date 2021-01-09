@@ -8,9 +8,8 @@ module.exports = (req, res, next) => {
         tokenUse: "access",
         tokenExpiration: 3600000
     });
-
     let accessTokenFromClient = req.headers.accesstoken;
-    if (!!accessTokenFromClient) {
+    if (!accessTokenFromClient) {
         return res.status(401).send("Access Token missing from header" );
     }
     
