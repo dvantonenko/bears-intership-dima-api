@@ -1,15 +1,10 @@
 let AWS = require('aws-sdk')
-
-let accessKeyId = process.env.aws_access_key_id
-let secretAccessKey = process.env.aws_secret_access_key
-
-
+require('dotenv').config()
 let awsConfig = {
     "region": "us-east-2",
-    "accessKeyId": accessKeyId,
-    "secretAccessKey": secretAccessKey
+    "accessKeyId": process.env.ACCESS_KEY_ID,
+    "secretAccessKey": process.env.SECRET_ACCESS_KEY
 }
-
 
 AWS.config.update(awsConfig)
 
@@ -80,7 +75,7 @@ const postersService = () => {
             Limit: 2
         };
         const data = await docClient.query(params).promise()
-        if (data.LastEvaluatedKey) { lastElemKey = data.LastEvaluatedKey } 
+        if (data.LastEvaluatedKey) { lastElemKey = data.LastEvaluatedKey }
         else {
             lastElemKey = 0
         }
@@ -104,7 +99,7 @@ const postersService = () => {
         return poster
     }
 
-    return { addPoster, deletePoster, fetchAllPosters, updatePoster, fetchByKey  }
+    return { addPoster, deletePoster, fetchAllPosters, updatePoster, fetchByKey }
 }
 
 module.exports = postersService

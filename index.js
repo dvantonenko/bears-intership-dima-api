@@ -1,5 +1,4 @@
 const express = require('express')
-const path = require('path')
 const app = express()
 const posterRoutes = require('./src/routes/poster.route')
 const userRoutes = require('./src/routes/user.route')
@@ -24,12 +23,10 @@ app.use(express.json({ extended: true,limit:'500mb' }))
 app.use('/poster',posterRoutes)
 app.use('/user',userRoutes)
 app.use('/auth', authRoutes)
-
 require('dotenv').config()
 
 const PORT = process.env.PORT || 3000
 
-const arr= [ { dog : 'vav'},]
 async function start() {
     try {
         app.listen(PORT, () => {

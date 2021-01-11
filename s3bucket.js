@@ -1,5 +1,5 @@
 var AWS = require('aws-sdk');
-
+require('dotenv').config()
 let awsConfig = {
     "region": "us-east-2",
     "accessKeyId": process.env.ACCESS_KEY_ID,
@@ -8,7 +8,6 @@ let awsConfig = {
 
 AWS.config.setPromisesDependency();
 AWS.config.update(awsConfig)
-
 const s3Bucket = () => {
     const s3 = new AWS.S3();
 

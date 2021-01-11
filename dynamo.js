@@ -1,12 +1,10 @@
 let AWS = require('aws-sdk')
-
-let accessKeyId = process.env.aws_access_key_id
-let secretAccessKey = process.env.aws_secret_access_key
+require('dotenv').config()
 
 let awsConfig = {
     "region": "us-east-2",
-    "accessKeyId": accessKeyId,
-    "secretAccessKey": secretAccessKey
+    "accessKeyId": process.env.ACCESS_KEY_ID,
+    "secretAccessKey": process.env.SECRET_ACCESS_KEY
 }
 
 
