@@ -1,2 +1,6 @@
+# package directories
 node_modules
-dynamo.js
+jspm_packages
+
+# Serverless directories
+.serverless
