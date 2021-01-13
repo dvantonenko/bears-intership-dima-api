@@ -9,9 +9,9 @@ exports.addPosterController = async (req, res) => {
         const { task, file } = req.body
         await putToBucket(Buffer.from(file, 'utf-8'), task.key)
         await addPoster('PosterLists', task)
-        return res.status(200).json({ message: "Post added successfully" })
+        res.status(200).json({ message: "Post added successfully" })
     } catch (e) {
-        return res.status(500).json({ errorMessage: "Check if the input data is correct", error: e })
+        res.status(500).json({ errorMessage: "Check if the input data is correct", error: e })
     }
 }
 

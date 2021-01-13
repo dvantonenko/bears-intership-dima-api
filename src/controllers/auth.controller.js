@@ -5,18 +5,18 @@ const { registration, login } = authService()
 exports.registerController = async (req, res) => {
     try {
         const data = await registration(req.body)
-        return res.json(data)
+        return res.status(200).send(data)
     } catch (e) {
-        throw new Error(e)
+        res.status(500).json({ errorMessage: "Registration error", error: e })
     }
 }
 // /auth/login
 exports.loginHandler = async (req, res) => {
     try {
         const data = await login(req.body)
-        return res.json(data)
+        return res.status(200).send(data)
     } catch (e) {
-        throw new Error(e)
+        res.status(500).json({ errorMessage: "Login error", error: e })
     }
 }
 
