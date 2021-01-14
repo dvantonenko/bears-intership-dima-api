@@ -1,16 +1,14 @@
 var AWS = require('aws-sdk');
-
+require('dotenv').config()
 let awsConfig = {
     "region": "us-east-2",
     "accessKeyId": process.env.ACCESS_KEY_ID,
-    "secretAccessKey": process.env.SECRE_ACCESS_KEY,
+    "secretAccessKey": process.env.SECRET_ACCESS_KEY,
 }
 
 AWS.config.setPromisesDependency();
 AWS.config.update(awsConfig)
-
 const s3Bucket = () => {
-
     const s3 = new AWS.S3();
 
     const createBucket = () => {
@@ -60,10 +58,10 @@ const s3Bucket = () => {
         var params = {
             Key: `${key}`,
             Body: file ,
-            ACL : 'public-read'
+            ACL : 'public-read',
         }
     
-        await s3.upload(params).promise().then(response => console.log(response,'Item was upload'),
+        await s3.upload(params).promise().then(response => console.log('Item was upload'),
             err => { throw new Error(err) })
     }
 

@@ -5,19 +5,20 @@ const { putToBucket, getFromBucket } = s3()
 
 exports.addPosterController = async (req, res) => {
     try {
+
         const { task, file } = req.body
         await putToBucket(Buffer.from(file, 'utf-8'), task.key)
-        await addPoster('PostersList', task)
-        return res.status(200).json({ message: "Post added successfully" })
+        await addPoster('PosterLists', task)
+        res.status(200).json({ message: "Post added successfully" })
     } catch (e) {
-        return res.status(500).json({ errorMessage: "Check if the input data is correct", error: e })
+        res.status(500).json({ errorMessage: "Check if the input data is correct", error: e })
     }
 }
 
 exports.getPostersController = async (req, res) => {
     try {
-        const { currentPage, postersPerPage, lastElemKey } = req.query//параметры передаем
-        const posters = await fetchAllPosters("PostersList", currentPage, postersPerPage, lastElemKey)
+        const { currentPage, postersPerPage, lastElemKey } = req.query
+        const posters = await fetchAllPosters("PosterLists", currentPage, postersPerPage, lastElemKey)
         res.status(200).json({ posters })
     } catch (e) {
         console.log(e)
@@ -29,7 +30,7 @@ exports.getPostersController = async (req, res) => {
 exports.deletePosterController = async (req, res) => {
     try {
         const { id } = req.body
-        deletePoster('PostersList', req.body)
+        deletePoster('PosterLists', req.body)
         if (!id) {
             res.status(400).json({ message: 'Invalid identifier' })
         }
@@ -51,7 +52,6 @@ exports.getByIdController = async (req, res) => {
         }
         res.status(200).json(poster)
     } catch (e) {
-
         res.status(500).json({ errorMessage: 'Something went wrong, please try again', error: e.message })
     }
 }
@@ -61,7 +61,6 @@ exports.updatePosterConroller = async (req, res) => {
         updatePoster(req.body)
         res.status(200).json({ message: "Post updated" })
     } catch (e) {
-
         res.status(500).json({ errorMessage: 'Data refresh error, please try again', error: e.message })
     }
 

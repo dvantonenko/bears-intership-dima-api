@@ -1,15 +1,10 @@
 let AWS = require('aws-sdk')
-
-let accessKeyId = process.env.aws_access_key_id
-let secretAccessKey = process.env.aws_secret_access_key
-
-
+require('dotenv').config()
 let awsConfig = {
     "region": "us-east-2",
-    "accessKeyId": accessKeyId,
-    "secretAccessKey": secretAccessKey
+    "accessKeyId": process.env.ACCESS_KEY_ID,
+    "secretAccessKey": process.env.SECRET_ACCESS_KEY
 }
-
 
 AWS.config.update(awsConfig)
 
@@ -32,7 +27,8 @@ const postersService = () => {
         const { id } = obj
         var params = {
             Key: {
-                'id': Number(id)
+                'id': Number(id),
+                'Posts': 'posts'
             },
             TableName: `${tableName}`
         };
@@ -40,15 +36,15 @@ const postersService = () => {
         docClient.delete(params)
             .promise().then()
             .catch(err => { throw new Error("Failed to delete post", err.message) });
-
     }
 
     const updatePoster = async (obj) => {
         const { title, subtitle, description, src, id } = obj
         var params = {
-            TableName: 'PostersList',
+            TableName: 'PosterLists',
             Key: {
                 'id': Number(id),
+                'Posts': 'posts'
             },
             UpdateExpression: 'set title = :a , subtitle = :b  , description = :c , src = :d',
             ExpressionAttributeValues: {
@@ -69,16 +65,18 @@ const postersService = () => {
     }
 
     const fetchAllPosters = async (tableName, currentPage, postersPerPage, lastKey) => {
-        let params = {
+        var params = {
+            ExpressionAttributeValues: {
+                ":v1": 'posts',
+            },
+            ExclusiveStartKey: lastKey ? { id: Number(lastKey), Posts: 'posts' } : undefined,
+            KeyConditionExpression: "Posts = :v1",
             TableName: `${tableName}`,
-            ExclusiveStartKey: lastKey ? { id: Number(lastKey) } : undefined,
-            Limit: postersPerPage
-        }
-        let queryResult = []
-        let lastElemKey = undefined;
-        let data = await docClient.scan(params).promise()
-
-        if (data.LastEvaluatedKey) { lastElemKey = data.LastEvaluatedKey } else {
+            Limit: 2
+        };
+        const data = await docClient.query(params).promise()
+        if (data.LastEvaluatedKey) { lastElemKey = data.LastEvaluatedKey }
+        else {
             lastElemKey = 0
         }
         queryResult = data.Items
@@ -88,8 +86,8 @@ const postersService = () => {
     const fetchByKey = async (id) => {
         let poster = {};
         let params = {
-            TableName: 'PostersList',
-            Key: { "id": Number(id) }
+            TableName: 'PosterLists',
+            Key: { "id": Number(id), "Posts": 'posts' }
         }
 
         await docClient.get(params)
