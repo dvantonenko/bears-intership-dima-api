@@ -17,9 +17,10 @@ exports.addPosterController = async (req, res) => {
 
 exports.getPostersController = async (req, res) => {
     try {
-        const { currentPage, postersPerPage, lastElemKey } = req.query
-        const posters = await fetchAllPosters("PosterLists", currentPage, postersPerPage, lastElemKey)
-        res.status(200).json({ posters })
+        // const { currentPage, postersPerPage, lastElemKey } = req.query
+        // const posters = await fetchAllPosters("PosterLists", currentPage, postersPerPage, lastElemKey)
+        // res.status(200).json({ posters })
+        res.status(200).json('success')
     } catch (e) {
         console.log(e)
         res.status(500).json({ message: "Server error, try again", error: e.message })

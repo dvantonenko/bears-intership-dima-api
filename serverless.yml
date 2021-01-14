@@ -1,0 +1,67 @@
+service: sls-lambda-dima  
+
+plugins: 
+  - serverless-offline
+
+frameworkVersion: '2'
+
+package:
+  exclude:
+    - .git/**
+    - .vscode/**
+    - dynamo/**
+  excludeDevDependencies: true
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: 20201221
+  memorySize: 2048
+  timeout: 30
+  stage: ${opt:stage, 'dev'}
+  region: us-east-2
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - ssm:*
+        - s3:*
+        - cloudformation:*
+      Resource: "*"
+
+  environment:
+    STAGE: ${opt:stage, 'dev'}
+    ACCESS_KEY_ID: ${ssm:/dima_access_key_id}
+    SECRET_ACCESS_KEY: ${ssm:/dima_secret_access_key}
+    USER_POOL_ID: ${ssm:/dima_user_pool_id}
+    APP_CLIENT_ID: ${ssm:/dima_app_client_id}
+
+functions:
+  createPost:
+    handler: handler.index
+    events:
+     - httpApi:
+         path: /poster/add
+         method: POST
+         cors: true
+  deletePost:
+    handler: handler.index
+    events:
+     - httpApi:
+         path: /poster/delete
+         method: POST
+         cors: true
+  updatePost:
+    handler: handler.index
+    events:
+     - httpApi:
+         path: /poster/update
+         method: POST
+         cors: true
+  getPosts:
+    handler: handler.index
+    events:
+     - httpApi:
+         path: /
+         method: GET
+         cors: true
