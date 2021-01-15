@@ -29,7 +29,8 @@ exports.getPostersController = async (req, res) => {
 exports.deletePosterController = async (req, res) => {
     try {
         const { id } = req.body
-        deletePoster('PosterLists', req.body)
+        await deletePoster('PosterLists', req.body)
+
         if (!id) {
             res.status(400).json({ message: 'Invalid identifier' })
         }
@@ -57,7 +58,7 @@ exports.getByIdController = async (req, res) => {
 
 exports.updatePosterConroller = async (req, res) => {
     try {
-        updatePoster(req.body)
+        await updatePoster(req.body)
         res.status(200).json({ message: "Post updated" })
     } catch (e) {
         res.status(500).json({ errorMessage: 'Data refresh error, please try again', error: e.message })

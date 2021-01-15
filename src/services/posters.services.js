@@ -23,7 +23,7 @@ const postersService = () => {
             .catch(err => { throw new Error("Failed to create post", console.log(err)) })
     }
 
-    const deletePoster = (tableName, obj) => {
+    const deletePoster = async (tableName, obj) => {
         const { id } = obj
         var params = {
             Key: {
@@ -33,9 +33,11 @@ const postersService = () => {
             TableName: `${tableName}`
         };
 
-        docClient.delete(params)
-            .promise().then()
+        await docClient.delete(params)
+            .promise()
+            .then()
             .catch(err => { throw new Error("Failed to delete post", err.message) });
+
     }
 
     const updatePoster = async (obj) => {
@@ -58,6 +60,7 @@ const postersService = () => {
 
         await docClient.update(params)
             .promise()
+            .then()
             .catch(err => {
                 console.log(err)
                 throw new Error("Failed to update data", err.message)
