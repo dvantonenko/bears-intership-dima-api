@@ -17,12 +17,10 @@ exports.addPosterController = async (req, res) => {
 
 exports.getPostersController = async (req, res) => {
     try {
-        // const { currentPage, postersPerPage, lastElemKey } = req.query
-        // const posters = await fetchAllPosters("PosterLists", currentPage, postersPerPage, lastElemKey)
-        // res.status(200).json({ posters })
-        res.status(200).json('success')
+        const { currentPage, postersPerPage, lastElemKey } = req.query
+        const posters = await fetchAllPosters("PosterLists", currentPage, postersPerPage, lastElemKey)
+        res.status(200).json({ posters })
     } catch (e) {
-        console.log(e)
         res.status(500).json({ message: "Server error, try again", error: e.message })
     }
 
@@ -31,7 +29,8 @@ exports.getPostersController = async (req, res) => {
 exports.deletePosterController = async (req, res) => {
     try {
         const { id } = req.body
-        deletePoster('PosterLists', req.body)
+        await deletePoster('PosterLists', req.body)
+
         if (!id) {
             res.status(400).json({ message: 'Invalid identifier' })
         }
@@ -59,7 +58,7 @@ exports.getByIdController = async (req, res) => {
 
 exports.updatePosterConroller = async (req, res) => {
     try {
-        updatePoster(req.body)
+        await updatePoster(req.body)
         res.status(200).json({ message: "Post updated" })
     } catch (e) {
         res.status(500).json({ errorMessage: 'Data refresh error, please try again', error: e.message })

@@ -18,7 +18,7 @@ provider:
   lambdaHashingVersion: 20201221
   memorySize: 2048
   timeout: 30
-  stage: ${opt:stage, 'dev'}
+  stage: dev
   region: us-east-2
 
   iamRoleStatements:
@@ -27,6 +27,12 @@ provider:
         - ssm:*
         - s3:*
         - cloudformation:*
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
       Resource: "*"
 
   environment:
@@ -40,28 +46,56 @@ functions:
   createPost:
     handler: handler.index
     events:
-     - httpApi:
+     - http:
          path: /poster/add
          method: POST
          cors: true
+         private: false
   deletePost:
     handler: handler.index
     events:
-     - httpApi:
+     - http:
          path: /poster/delete
          method: POST
          cors: true
+         private: false
+  getPostById:
+    handler: handler.index
+    events:
+     - http:
+         path: /poster/update/{id}
+         method: GET
+         cors: true
+         private: false
   updatePost:
     handler: handler.index
     events:
-     - httpApi:
+     - http:
          path: /poster/update
          method: POST
          cors: true
+         private: false
   getPosts:
     handler: handler.index
     events:
-     - httpApi:
-         path: /
+     - http:
+         path: /poster
          method: GET
          cors: true
+         private: false 
+  signIn: 
+    handler: handler.index
+    events:
+      - http:
+         path : /auth/login
+         method: POST
+         cors: true
+         private: false
+  signUp:
+    handler: handler.index
+    events:
+      - http:
+         path : /auth/register
+         method: POST
+         cors: true
+         private: false

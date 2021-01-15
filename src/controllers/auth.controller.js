@@ -17,6 +17,7 @@ exports.loginHandler = async (req, res) => {
         return res.status(200).send(data)
     } catch (e) {
         res.status(500).json({ errorMessage: "Login error", error: e })
+
     }
 }
 
