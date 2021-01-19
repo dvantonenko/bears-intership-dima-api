@@ -1,6 +1,5 @@
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js')
 let AWS = require('aws-sdk')
-const c = require('config')
 require('dotenv').config()
 
 const poolData = {
