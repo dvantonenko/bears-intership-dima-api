@@ -12,15 +12,14 @@ module.exports = (req, res, next) => {
     let accessTokenFromClient = req.headers.authorization.split(' ')[1];
 
     if (!accessTokenFromClient) {
-        res.status(401).send("Access Token missing from header" );
+        res.status(401).send("Access Token missing from header");
     }
-    
     cognitoExpress.validate(accessTokenFromClient, function (err, response) {
-
+        
         if (err) res.status(401).send(err);
-
+       
         res.locals.user = response;
-
+    
         next();
     });
 }

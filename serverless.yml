@@ -99,3 +99,20 @@ functions:
          method: POST
          cors: true
          private: false
+  logout:
+    handler: handler.index
+    events: 
+      - http:
+         path: /auth/logout
+         method: POST
+         cors: true
+         private: false
+  refreshToken:
+    handler: handler.index
+    events: 
+      - http:
+         path: /auth/refreshtoken
+         method: POST
+         cors: true
+         private: false
+    

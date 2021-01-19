@@ -1,5 +1,6 @@
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js')
 let AWS = require('aws-sdk')
+const c = require('config')
 require('dotenv').config()
 
 const poolData = {
@@ -43,18 +44,17 @@ const authService = () => {
             Password: password
         }
         const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(loginDetails)
-
         const userDetails = {
             Username: email,
             Pool: userPool
         }
-
         const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userDetails)
         return new Promise(function (resolve, reject) {
             cognitoUser.authenticateUser(authenticationDetails, {
                 onSuccess: data => {
                     let accessToken = data.getAccessToken().getJwtToken();
                     let username = data.getAccessToken().payload.username
+                    let refreshToken = data.getRefreshToken().getToken()
                     if (cognitoUser != null) {
                         cognitoUser.getSession(function (err, session) {
                             if (err) {
@@ -63,7 +63,7 @@ const authService = () => {
                             }
                         })
                     }
-                    resolve({ accessToken, username })
+                    resolve({ accessToken, username, refreshToken, email })
                 },
                 onFailure: err => {
                     resolve(err)
@@ -72,6 +72,43 @@ const authService = () => {
         })
 
     }
-    return { registration, login }
+
+    const refreshSession = async (refreshtoken, email) => {
+
+        const userDetails = {
+            Username: email,
+            Pool: userPool
+        }
+        const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userDetails)
+
+        const RefreshToken = new AmazonCognitoIdentity.CognitoRefreshToken({ RefreshToken: refreshtoken });
+
+        return new Promise(function (resolve, reject) {
+            cognitoUser.refreshSession(RefreshToken, (err, data) => {
+                if (err) { reject(err) }
+                let accessToken = data.getAccessToken().getJwtToken();
+                let refreshToken = data.getRefreshToken().getToken()
+                resolve({ accessToken, refreshToken })
+            })
+
+        })
+    }
+
+    const logout = async (email) => {
+        const userDetails = {
+            Username: email,
+            Pool: userPool
+        }
+        let cognitoUser = new AmazonCognitoIdentity.CognitoUser(userDetails)
+
+        if (cognitoUser) {
+            return new Promise(success => {
+                cognitoUser.signOut()
+                success('success sign out')
+            })
+
+        }
+    }
+    return { registration, login, refreshSession, logout }
 }
 module.exports = authService
