@@ -1,5 +1,7 @@
 const { mockRequest, mockResponse } = require('./src/utils/interceptors')
-const { addPosterController, deletePosterController, getPostersController, getByIdController, updatePosterConroller } = require('./src/controllers/poster.controllers')
+const { addPosterController, deletePosterController,
+    getPostersController, getByIdController,
+    updatePosterConroller } = require('./src/controllers/poster.controllers')
 const { registration, login, refreshSession, logout } = require("./src/services/auth.services")
 describe("Check method addPosterController' ", () => {
 
@@ -36,8 +38,8 @@ describe("Check method addPosterController' ", () => {
         expect(res.status).toHaveBeenCalledWith(500);
         expect(res.json).toHaveBeenCalledWith({ errorMessage: "Failed to create post" });
     });
-    test('should return 500 and error message if body is empty object ', async () => {
-        req.body = [];
+    test('should return 500 and error message if body is undefined  ', async () => {
+        req.body = undefined;
         await addPosterController(req, res);
         expect(res.status).toHaveBeenCalledWith(500);
         expect(res.json).toHaveBeenCalledWith({ errorMessage: "Failed to create post" });
@@ -87,14 +89,13 @@ describe("Check method getPostersController", () => {
         errormessage = { message: "Server error, try again" }
         arr = [false, null, '', 0]
     })
-    test("should return status 200 and posters", async () => {
+    test("should return status 200 ", async () => {
         req.query = { currentPage: 1, postersPerPage: 2, lastElemKey: 1611571954286 }
         await getPostersController(req, res);
         expect(res.status).toHaveBeenCalledWith(200)
-        expect(res.json).toHaveBeenCalledWith({ "posters": { "lastElemKey": 0, "queryResult": [] } })
 
     })
-    test("should return status 200 and value with lastelemkey ", async () => {
+    test("should return status 200 ", async () => {
         for (let i = 0; i < arr.length; i++) {
             req.query = { lastElemKey: arr[i] }
             await getPostersController(req, res);
@@ -109,9 +110,10 @@ describe("Check registration method", () => {
         obj = {
             username: 'email1@mail.ru',
             password: 'Password99',
-            surename: "surename",
+            surname: "surname",
             email: "email1@mail.ru"
         }
+
         arr = [false, 0, "", null]
     })
     test("should return object value", async () => {
@@ -130,10 +132,36 @@ describe("Check registration method", () => {
             })
         }
         expect(res.json).toHaveBeenCalledTimes(4)
-
     })
-
+    test("should return error with incorect email", () => {
+        return registration({
+            username: 'email1mail.ru',
+            password: 'Password99',
+            surname: "surname",
+            email: "email1ail.ru"
+        }
+        ).then(data => expect(data.message).toBe("Invalid email address format."))
+    })
+    test("should return error with incorect password", () => {
+        return registration({
+            username: 'email1@mail.ru',
+            password: 'Password99',
+            surname: "surname",
+            email: "email1@mail.ru"
+        }
+        ).then(data => expect(data.message).toBe("An account with the given email already exists."))
+    })
+    test("should return error with incorect password", () => {
+        return registration({
+            username: 'email3@mail.ru',
+            password: 'password99',
+            surname: "surname",
+            email: "email3@mail.ru"
+        }
+        ).then(data => expect(data.message).toBe("Password did not conform with policy: Password must have uppercase characters"))
+    })
 })
+
 describe("Check login method", () => {
     beforeEach(() => {
         obj = {
@@ -149,11 +177,11 @@ describe("Check login method", () => {
     })
 
     test("should return object value with in", async () => {
+
         return login(obj).then(data => {
             expect(data).toBeInstanceOf(Object)
             expect(data).toBeDefined()
             expect(data.message).toBeDefined()
-            // expect(data.message).toBe("Incorrect username or password.")
         })
     })
     test("should return object value with correct answer", () => {
@@ -162,7 +190,6 @@ describe("Check login method", () => {
             expect(data).toBeDefined()
             expect(data.message).toBeDefined()
             expect(data.message).not.toBeFalsy()
-
         })
     })
     test("should return object with error", async () => {
@@ -178,31 +205,45 @@ describe("Check login method", () => {
 }
 )
 
+describe("Check refreshsession method", () => {
+    let mock = {}
+    mock.spy = jest.fn().mockReturnValue(mock)
+
+    beforeEach(() => {
+        refreshtoken = "Dfewkoik5oikdew"
+        email = "email@mail.ru"
+        message = {
+            code: "NotAuthorizedException",
+            message: "Invalid Refresh Token",
+            name: "NotAuthorizedException"
+        }
+    })
+    test("request witn invalid token return error", () => {
+        return refreshSession(refreshtoken, email).catch(err => {
+            expect(err).toBeInstanceOf(Object)
+            expect(err.message).toBe("Invalid Refresh Token")
+        })
+    })
+
+    test("", () => {
+        mock.spy(2)
+        expect(mock.spy).toHaveBeenCalledWith(2)
+    })
+})
+
 describe("Check method getByIdController", () => {
     beforeEach(() => {
         req = mockRequest()
         res = mockResponse()
         errormessage = { errorMessage: 'Something went wrong, please try again' }
         arr = [false, null, '', 0]
-        obj = {
-            Item: {
-                Posts: "posts",
-                description: "discription update",
-                id: 1611571954286, "indexPoster": 1,
-                key: "88.jpg",
-                owner: "3e3275ab-70ad-42bb-8a20-11aadc66c2a8",
-                src: "data:image/png;base64,b4lQTkcNChoKAAAA",
-                subtitle: "subtitle update", title: "title update"
-            }
-        }
 
     })
     test("should return status 200 and values", async () => {
-        req.params.id = 1611571954286
+        req.params.id = 1611656604864
         await getByIdController(req, res);
         expect(res.status).toHaveBeenCalledWith(200)
-        expect(res.send.mock.calls.length).toBe(0)
-        // expect(res.json).toHaveBeenCalledWith(obj)
+        expect(res.json).toHaveBeenCalled()
     })
     test("should return status 500 and error message", async () => {
         for (let i = 0; i < arr.length; i++) {
@@ -210,6 +251,7 @@ describe("Check method getByIdController", () => {
             await getByIdController(req, res);
             expect(res.status).toHaveBeenCalledWith(500)
             expect(res.json).toHaveBeenCalledWith(errormessage)
+
         }
         expect(res.json).toHaveBeenCalledTimes(4)
     })
@@ -229,7 +271,7 @@ describe("Check method updatePosterController", () => {
         message = { message: "Post updated" }
         arr = [false, null, '', 0]
     })
-    test("shuold return status 200 and value ", async () => {
+    test("should return status 200 and value ", async () => {
         req.body = obj
         await updatePosterConroller(req, res)
         expect(res.status).toHaveBeenCalledWith(200)

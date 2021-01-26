@@ -7,8 +7,9 @@ exports.addPosterController = async (req, res) => {
     try {
 
         const { task, file } = req.body
-        await putToBucket(Buffer.from(file, 'utf-8'), task.key)
-        await PosterService.addPoster('PosterLists', task)
+        console.log('task',task)
+        // await putToBucket(Buffer.from(file, 'utf-8'), task.key)
+        // await PosterService.addPoster('PosterLists', task)
         res.status(200).json({ message: "Post added successfully" })
     } catch (e) {
         res.status(500).json({ errorMessage: "Failed to create post"})

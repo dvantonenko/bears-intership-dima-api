@@ -12,6 +12,7 @@ let docClient = new AWS.DynamoDB.DocumentClient()
 
 
 exports.addPoster = async (tableName, obj) => {
+    console.log('obj',obj)
         var params = {
             TableName: `${tableName}`,
             Item: obj
@@ -61,7 +62,6 @@ exports.addPoster = async (tableName, obj) => {
             .promise()
             .then()
             .catch(err => {
-                console.log(err)
                 throw new Error("Failed to update data", err.message)
             });
     }

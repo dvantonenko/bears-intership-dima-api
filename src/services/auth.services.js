@@ -12,21 +12,21 @@ const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData)
 
 exports.registration = async (obj) => {
 
-    const { username, password, surename, email } = obj
+    const { username, password, surname, email } = obj
     const emailData = {
         Name: 'email',
         Value: email
     }
-    const surenameData = {
+    const surnameData = {
         Name: "family_name",
-        Value: surename
+        Value: surname
     }
 
     const emailAttribute = new AmazonCognitoIdentity.CognitoUserAttribute(emailData)
-    const surenameAttribute = new AmazonCognitoIdentity.CognitoUserAttribute(surenameData)
+    const surnameAttribute = new AmazonCognitoIdentity.CognitoUserAttribute(surnameData)
 
     return new Promise(function (resolve, reject) {
-        userPool.signUp(username, password, [emailAttribute, surenameAttribute], null, (err, data) => {
+        userPool.signUp(username, password, [emailAttribute, surnameAttribute], null, (err, data) => {
             if (err) {
                 resolve(err)
             } else {
