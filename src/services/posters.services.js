@@ -10,9 +10,9 @@ AWS.config.update(awsConfig)
 
 let docClient = new AWS.DynamoDB.DocumentClient()
 
-const postersService = () => {
 
-    const addPoster = async (tableName, obj) => {
+exports.addPoster = async (tableName, obj) => {
+    console.log('obj',obj)
         var params = {
             TableName: `${tableName}`,
             Item: obj
@@ -23,7 +23,7 @@ const postersService = () => {
             .catch(err => { throw new Error("Failed to create post", console.log(err)) })
     }
 
-    const deletePoster = async (tableName, obj) => {
+    exports.deletePoster = async (tableName, obj) => {
         const { id } = obj
         var params = {
             Key: {
@@ -40,7 +40,7 @@ const postersService = () => {
 
     }
 
-    const updatePoster = async (obj) => {
+    exports.updatePoster = async (obj) => {
         const { title, subtitle, description, src, id } = obj
         var params = {
             TableName: 'PosterLists',
@@ -62,12 +62,11 @@ const postersService = () => {
             .promise()
             .then()
             .catch(err => {
-                console.log(err)
                 throw new Error("Failed to update data", err.message)
             });
     }
 
-    const fetchAllPosters = async (tableName, currentPage, postersPerPage, lastKey) => {
+    exports.fetchAllPosters = async (tableName, currentPage, postersPerPage, lastKey) => {
         var params = {
             ExpressionAttributeValues: {
                 ":v1": 'posts',
@@ -86,7 +85,7 @@ const postersService = () => {
         return { queryResult, lastElemKey }
     }
 
-    const fetchByKey = async (id) => {
+    exports.fetchByKey = async (id) => {
         let poster = {};
         let params = {
             TableName: 'PosterLists',
@@ -102,7 +101,4 @@ const postersService = () => {
         return poster
     }
 
-    return { addPoster, deletePoster, fetchAllPosters, updatePoster, fetchByKey }
-}
 
-module.exports = postersService

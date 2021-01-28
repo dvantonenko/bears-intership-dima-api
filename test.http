@@ -1,8 +1,0 @@
-  
-#   POST https://cmsvelj8ne.execute-api.us-east-2.amazonaws.com/poster/add
-  
-#   POST https://cmsvelj8ne.execute-api.us-east-2.amazonaws.com/poster/delete
-
-#   POST https://cmsvelj8ne.execute-api.us-east-2.amazonaws.com/poster/update
-
-  GET https://cmsvelj8ne.execute-api.us-east-2.amazonaws.com/
