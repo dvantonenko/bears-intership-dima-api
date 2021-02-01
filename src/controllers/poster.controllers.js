@@ -1,4 +1,3 @@
-const postersService = require('../services/posters.services')
 const s3 = require('../../s3bucket')
 const PosterService = require('../services/posters.services')
 const { putToBucket, getFromBucket } = s3()
@@ -7,9 +6,8 @@ exports.addPosterController = async (req, res) => {
     try {
 
         const { task, file } = req.body
-        console.log('task',task)
-        // await putToBucket(Buffer.from(file, 'utf-8'), task.key)
-        // await PosterService.addPoster('PosterLists', task)
+        await putToBucket(Buffer.from(file, 'utf-8'), task.key)
+        await PosterService.addPoster('PosterLists', task)
         res.status(200).json({ message: "Post added successfully" })
     } catch (e) {
         res.status(500).json({ errorMessage: "Failed to create post"})
@@ -18,8 +16,8 @@ exports.addPosterController = async (req, res) => {
 
 exports.getPostersController = async (req, res) => {
     try {
-        const { currentPage, postersPerPage, lastElemKey } = req.query
-        const posters = await PosterService.fetchAllPosters("PosterLists", currentPage, postersPerPage, lastElemKey)
+        const { currentPage, postersPerPage, lastElemKey , filter} = req.query
+        const posters = await PosterService.fetchAllPosters("PosterLists", currentPage, postersPerPage, lastElemKey, filter)
         res.status(200).json({ posters })
     } catch (e) {
         res.status(500).json({ message: "Server error, try again" })
