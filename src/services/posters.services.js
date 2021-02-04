@@ -68,9 +68,9 @@ exports.updatePoster = async (obj) => {
 
 exports.fetchAllPosters = async (tableName, currentPage, postersPerPage, lastKey, filter) => {
     if (filter === "old_at_first") {
-        filter = false
-    } else if (filter === "new_at_first") {
         filter = true
+    } else if (filter === "new_at_first") {
+        filter = false
     }
 
     var params = {
